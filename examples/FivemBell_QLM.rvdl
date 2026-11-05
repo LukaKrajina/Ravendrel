@@ -1,0 +1,20 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    int32 epochs = 10;
+    double learning_rate = 0.1;
+
+    // 1. 把自然语言编码为基态 QObject
+    auto encoded_prompt = encode_text("A");
+
+    // 2. 训练 QLM 变分量子线路
+    auto trained_model = qlm_invoke(encoded_prompt, epochs, learning_rate);
+
+    // 3. 把训练好的参数和拓扑元数据导出到磁盘
+    trained_model.export("chaos_fluid_predictor.rvdlm");
+
+    // 4. 把量子对象坍缩为经典整数
+    int32 final_value = encoded_prompt.measure();
+
+    // Ravendrel JIT 运行时退出时会打印这个值
+    return final_value;
+}

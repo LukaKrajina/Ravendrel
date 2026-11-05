@@ -1,0 +1,17 @@
+{
+    "toolbar.open": "Open",
+    "toolbar.save": "Save",
+    "toolbar.run": "▶ Run",
+    "toolbar.clear": "Clear Output",
+    "toolbar.hint": "Start runtime --daemon before running",
+    "status.untitled": "Untitled",
+    "status.modified": "Modified",
+    "status.opened": "Opened",
+    "status.saved": "Saved",
+    "status.compiling": "Compiling...",
+    "status.success": "Compile OK",
+    "status.fail": "Compile failed",
+    "shell.opened": "Opened",
+    "shell.saved": "Saved",
+    "shell.compiling": "Compiling..."
+}

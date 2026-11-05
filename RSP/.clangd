@@ -1,0 +1,13 @@
+CompileFlags:
+  Add:
+    - -std=c++20
+    - -DNOMINMAX
+    - -D_CRT_SECURE_NO_WARNINGS
+    - -DNDEBUG
+    - -Id:/BH_Project/ravendrel-vscode/runtime/include
+    - -Id:/BH_Project/ravendrel-vscode/rvdlRSP/include
+    - -Id:/BH_Project/ravendrel-vscode/vendor
+    - -IC:/Libraries/kokkos/include
+    - -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.9/include"
+    - -IC:/msys64/ucrt64/include
+    - -IC:/VulkanSDK/1.4.350.0/include

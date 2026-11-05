@@ -1,0 +1,94 @@
+# ============================================================================
+# Ravendrel workspace .gitignore -- build artifacts / dependencies / caches / packages
+# ============================================================================
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.npm/
+.deps/
+
+# C/C++ / CMake build artifacts
+build/
+build-*/
+runtime/build*/
+rvdlRSP/build*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+cmake_uninstall.cmake
+Makefile
+build.ninja
+.ninja_deps
+.ninja_log
+*.ninja
+*.cmake
+*.make
+*.o
+*.obj
+*.d
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.lib
+*.exe
+*.tlog
+
+# Node.js / TypeScript / frontend build
+server/out/
+client/out/
+SE/out/
+SE/dist/
+chatWebUI/dist/
+*.tsbuildinfo
+*.map
+.vite/
+coverage/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Go build
+installer/ravendrelup
+installer/ravendrelup.exe
+
+# Package / release artifacts
+bin/
+*.vsix
+release/
+
+# System / editor caches
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.cache/
+
+# Local dev config / temp files
+sign_clang.ps1
+runtime/build_log.txt
+runtime/*.tmp*
+.rvdl-cache/
+
+# vendor 第三方预编译库（GLFW 等）：保留，不因 *.dll/*.lib/*.a 通配符被忽略
+!vendor/
+!vendor/**/
+!vendor/**/*.dll
+!vendor/**/*.lib
+!vendor/**/*.a
+
+# Android release 签名（私钥，严禁提交）
+runtime/android/apk/release.keystore
+runtime/android/apk/keystore.properties
+runtime/android/apk/local.properties
+runtime/android/apk/app/build/
+
+# 构建日志 / 临时产物
+*.log
+build_log.txt
+*_tmp*
+_tmp_test.glb

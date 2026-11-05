@@ -1,0 +1,38 @@
+// ============================================================================
+//  用 RVDL 编写中断描述符表（IDT）条目打包
+//
+//  x86_64 IDT 条目 = 16 字节 = 4 个 int32 字：
+//    word0 = offset[15:0] | (selector << 16)
+//    word1 = type_attr(0x8E=142, 存在+ring0+中断门)<<8 | IST(0) | offset[31:16]
+//    word2 = offset[63:32]（高 32 位）
+//    word3 = 保留 0
+//
+//  预期返回 3：三项校验（低 16 位偏移=4096、选择子=8、类型属性=142）。
+// ============================================================================
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 1 个条目 = 4 字
+    cap<int32> idt = rvdl_gc_alloc(16);
+
+    int32 offset = 4096;   // 0x1000：中断处理函数地址
+    int32 selector = 8;    // 代码段选择子
+
+    // 打包条目
+    *(idt + 0) = (offset & 65535) | (selector << 16);
+    *(idt + 1) = 36352 | ((offset >> 16) & 65535);   // 0x8E00
+    *(idt + 2) = 0;   // offset 高 32 位（0）
+    *(idt + 3) = 0;   // 保留
+
+    // 解包并校验
+    int32 low  = *(idt + 0) & 65535;          // offset 低 16 位
+    int32 sel  = (*(idt + 0) >> 16) & 65535;  // 选择子
+    int32 attr = (*(idt + 1) >> 8) & 255;     // type_attr 在 bits 8-15（byte5）
+
+    int32 check = 0;
+    if (low == 4096) { check = check + 1; }
+    if (sel == 8)    { check = check + 1; }
+    if (attr == 142) { check = check + 1; }
+
+    return check;
+}

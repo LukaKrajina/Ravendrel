@@ -1,0 +1,34 @@
+// qrc_demo.rvdl —— 量子储备池（QRC）示例
+//
+// DQNF 范式：QRC（固定随机电路 + 线性读出，无贫瘠高原）与 QLM（可训练
+// 变分语言模型）并存。QRC 作为时序/连续信号的"前端感知器"，QLM 作为
+// 下游离散建模器。
+//
+// 运行前需启动守护进程：./runtime --daemon
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 1) 创建一个 8-qubit、4 层固定随机电路的量子储备池
+    auto res = new QReservoir(8, 4);
+
+    // 2) 读脑电信号，编码为量子态（作为储备池的输入）
+    let brain = mind_read("eeg");
+
+    // 3) 储备池探测：非破坏 ⟨Z⟩ 特征（储备池部分不训练）
+    let features = qrc_probe(res, brain);
+
+    // 4) 训练线性读出层（凸优化，无贫瘠高原）
+    qrc_train(res, 200, 0.01);
+
+    // 5) 预测
+    let pred = qrc_predict(res, brain);
+
+    // 6) QLM 保留：可训练变分语言模型（与 QRC 并存）
+    let model = qlm_invoke(features, 10, 0.01);
+    model.export("qrc_qlm_model.rvdlm");
+
+    // 释放储备池资源（长期运行必须显式释放，回收 qubit）
+    qrc_release(res);
+
+    return 0;
+}

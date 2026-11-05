@@ -1,0 +1,100 @@
+// tqnf_entropy.rvdl —— 测量熵（非酉性香农熵）示例
+//
+// 混沌丰富度不能用邻近态重叠（纯酉演化等距，重叠恒定）。
+// 改用「漂移 + 测量」后涌现情绪态分布的香农熵：有序 → 0，均匀 → ln 4，混沌边缘在中间。
+//
+// 运行：rvdl run examples/tqnf_entropy.rvdl
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 标量香农熵：均匀分布 ≈ ln4 ≈ 1.386，退化分布 ≈ 0
+    double s_uniform = shannon4(25, 25, 25, 25);
+    double s_degen = shannon4(100, 0, 0, 0);
+    int32 ok = 0;
+    if (s_uniform > 1.3 && s_uniform < 1.45) {
+        ok = 1;
+    }
+    if (s_degen < 0.001) {
+        ok = ok + 1;
+    }
+    rvdl_sys_logi(1, ok);   // 2：香农熵正确
+
+    // 测量熵随 dt 单调：弱混沌（dt=0.1）熵 < 强混沌（dt=0.8）熵
+    int32 w0 = 0;
+    int32 w1 = 0;
+    int32 w2 = 0;
+    int32 w3 = 0;
+    int32 t = 0;
+    while (t < 64) {
+        auto q = new QuantumRegister(2);
+        int32 i = 0;
+        while (i < 2) {
+            qgate_h(q, 0);
+            qgate_rz(q, 0, 0.1 * 1.61803);
+            qgate_rz(q, 1, 0.1 * 0.73205);
+            qgate_cnot(q, 0, 1);
+            qgate_h(q, 1);
+            i = i + 1;
+        }
+        int32 b0 = qmeasure(q, 0);
+        int32 b1 = qmeasure(q, 1);
+        int32 st = b0 * 2 + b1;
+        if (st == 0) {
+            w0 = w0 + 1;
+        }
+        if (st == 1) {
+            w1 = w1 + 1;
+        }
+        if (st == 2) {
+            w2 = w2 + 1;
+        }
+        if (st == 3) {
+            w3 = w3 + 1;
+        }
+        t = t + 1;
+    }
+    double s_weak = shannon4(w0, w1, w2, w3);
+
+    int32 s0 = 0;
+    int32 s1 = 0;
+    int32 s2 = 0;
+    int32 s3 = 0;
+    int32 u = 0;
+    while (u < 64) {
+        auto q = new QuantumRegister(2);
+        int32 i = 0;
+        while (i < 2) {
+            qgate_h(q, 0);
+            qgate_rz(q, 0, 0.8 * 1.61803);
+            qgate_rz(q, 1, 0.8 * 0.73205);
+            qgate_cnot(q, 0, 1);
+            qgate_h(q, 1);
+            i = i + 1;
+        }
+        int32 b0 = qmeasure(q, 0);
+        int32 b1 = qmeasure(q, 1);
+        int32 st = b0 * 2 + b1;
+        if (st == 0) {
+            s0 = s0 + 1;
+        }
+        if (st == 1) {
+            s1 = s1 + 1;
+        }
+        if (st == 2) {
+            s2 = s2 + 1;
+        }
+        if (st == 3) {
+            s3 = s3 + 1;
+        }
+        u = u + 1;
+    }
+    double s_strong = shannon4(s0, s1, s2, s3);
+
+    int32 monotone = 0;
+    if (s_weak < s_strong) {
+        monotone = 1;
+    }
+    rvdl_sys_logi(1, monotone);   // 1：dt 是混沌的有效旋钮
+
+    return ok + monotone;
+}

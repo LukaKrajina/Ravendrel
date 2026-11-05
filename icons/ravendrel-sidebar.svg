@@ -1,0 +1,11 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.000000" height="24.000000" fill="none">
+	<defs>
+		<linearGradient id="paint_linear_3" x1="1.125" x2="1.125" y1="1.125" y2="22.875" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(169,76,255)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(123,31,216)" offset="1" stop-opacity="1" />
+		</linearGradient>
+	</defs>
+	<rect id="sidebar" width="24.000000" height="24.000000" x="0.000000" y="0.000000" />
+	<circle id="椭圆 1" cx="12" cy="12" r="10.875" fill="url(#paint_linear_3)" />
+	<path id="矢量 38" d="M0.75 12.75L9.75 8.625L10.875 6.375L13.125 4.875L14.25 6.375L16.125 4.5L17.625 6L21 9.75L21 13.875L18.375 17.625L16.5 16.5L15 19.875L12 18.375L11.25 16.125L9 14.25L0.75 12.75ZM17.25 8.625L12.75 10.5L16.125 11.625L17.25 8.625Z" fill="rgb(255,255,255)" fill-rule="evenodd" />
+</svg>

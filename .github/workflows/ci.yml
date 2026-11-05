@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gui-tests:
+    name: rvdlRSP_gui_tests (Qt Test)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build \
+            qt6-base-dev \
+            llvm-dev libvulkan-dev \
+            libgl1-mesa-dev libglfw3-dev
+
+      - name: Build Kokkos (Serial)
+        run: |
+          git clone --depth 1 --branch 4.3.01 \
+            https://github.com/kokkos/kokkos.git /tmp/kokkos
+          cmake -S /tmp/kokkos -B /tmp/kokkos/build -G Ninja \
+            -DKokkos_ENABLE_SERIAL=ON \
+            -DKokkos_ENABLE_CUDA=OFF \
+            -DKokkos_ENABLE_OPENMP=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/tmp/kokkos/install
+          cmake --build /tmp/kokkos/build -j 2
+          cmake --install /tmp/kokkos/build
+
+      - name: Configure
+        run: |
+          cmake -S runtime -B build -G Ninja \
+            -DQt6_DIR=/usr/lib/x86_64-linux-gnu/cmake/Qt6 \
+            -DKokkos_DIR=/tmp/kokkos/install/lib/cmake/Kokkos \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build tests
+        run: cmake --build build --target rvdlRSP_gui_tests -j 2
+
+      - name: Run tests
+        run: ctest --test-dir build -R rvdlRSP_gui_tests --output-on-failure
+
+      # 运行时库 ABI 自检：防止「构建成功但符号残缺 / 打包陈旧 .so」。
+      # 期望符号表由 runtime/include/qhal/RuntimeApi.h 自动提取（头文件即契约）。
+      - name: Build runtime shared library
+        run: cmake --build build --target rvdl_rt -j 2
+
+      - name: Verify runtime ABI symbols
+        run: bash scripts/check-rt-symbols.sh

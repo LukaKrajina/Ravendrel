@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+}
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #333;
+    color: #ddd;
+}
+.toolbar .title {
+    font-weight: bold;
+    margin-right: auto;
+}
+.toolbar button {
+    background: #0a7d0a;
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.toolbar button:hover {
+    background: #0b8f0b;
+}
+.toolbar button:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+.toolbar .hint {
+    font-size: 12px;
+    color: #999;
+}
+.toolbar .lang-select {
+    background: #252526;
+    color: #ddd;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+#statusbar {
+    display: flex;
+    gap: 16px;
+    padding: 4px 12px;
+    background: #252526;
+    color: #999;
+    font-size: 12px;
+    border-top: 1px solid #444;
+}
+#status-file {
+    color: #ccc;
+}
+#status-diag {
+    margin-left: auto;
+}
+#status-diag.error {
+    color: #f66;
+}
+#status-diag.ok {
+    color: #6c6;
+}
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.editor-pane {
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+.editor-pane #editor {
+    height: 100%;
+}
+.editor-pane .cm-editor {
+    height: 100%;
+}
+.shell-pane {
+    height: 220px;
+    background: #111;
+    border-top: 1px solid #444;
+    overflow: auto;
+}
+#shell {
+    color: #0f0;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    padding: 10px;
+    white-space: pre-wrap;
+}

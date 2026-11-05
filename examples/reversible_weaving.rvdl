@@ -1,0 +1,52 @@
+// ============================================================================
+// 可逆编织（Reversible Weaving）范式示例
+//
+//   标签体系：
+//     @[gate]   标记为可组合量子门
+//     @[undo]   合成可逆对偶 U†（门序反转 + 逐门取逆）
+//     @[steer]  合成相干控制 Λ(U)（控制位导引目标门）
+//     @[unitary] 酉性验证（无测量 / 无经典分支依赖）
+//     @[noise]  噪声注入（物理特性 → QVM 噪声通道）
+//
+//   编译器自动生成：
+//     U_undo  = rz(q, -0.5) · h(q)        （U = h · rz 的可逆对偶）
+//     U_steer = crz(ctrl, q, 0.5) · ch(ctrl, q)（受控版本）
+//
+// 运行：rvdl run examples/reversible_weaving.rvdl（需先启动 runtime daemon）
+// ============================================================================
+
+// 一个可组合量子门：U = H · Rz(0.5)
+@[gate] @[undo] @[steer] @[unitary]
+void U(Qubit q) {
+    h(q);
+    rz(q, 0.5);
+}
+
+// 带噪声的可逆门：验证 U†·U = I 在去极化噪声下的偏离
+@[gate] @[noise("depolarizing")] @[undo]
+void NoisyX(Qubit q) {
+    x(q);
+}
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    Qubit q = alloc();
+    Qubit c = alloc();
+
+    // 1) 用户门 U（@[gate]）
+    U(q);
+
+    // 2) 可逆对偶 U_undo（@[undo] 自动合成：门序反转 + 逐门取逆）
+    U_undo(q);
+
+    // 3) 相干控制 U_steer（@[steer] 自动合成：控制位导引目标门）
+    U_steer(c, q);
+
+    // 4) 噪声下的可逆对偶（@[noise] 门后注入去极化噪声）
+    NoisyX(q);
+    NoisyX_undo(q);
+
+    int32 r = measure(q);
+    measure(c);
+    return r;
+}

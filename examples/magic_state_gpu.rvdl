@@ -1,0 +1,31 @@
+// 含魔法态的量子电路：Toffoli 门触发 GPU（Dense_StateVector）卸载路径
+// 用 CUDA 版 runtime 运行时，daemon 日志会打印：
+//   [QVM Router] Active Policy: 2  (2 = Dense_StateVector，即 GPU 路径)
+//
+// 注意：alloc() 使用全局递增计数器（不复用已释放 qubit），
+// 因此这里一次性分配固定数量的 qubit，切勿循环 alloc（会泄漏导致状态向量超 VRAM）。
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    auto a = alloc();
+    auto b = alloc();
+    auto c = alloc();
+    auto d = alloc();
+    auto e = alloc();
+    auto f = alloc();
+    auto g = alloc();
+    auto q7 = alloc();
+
+    h(a);
+    h(b);
+    toffoli(a, b, c);
+    h(c);
+    toffoli(c, d, e);
+    h(e);
+    toffoli(e, f, g);
+    h(g);
+    h(q7);
+    toffoli(g, q7, a);
+
+    int32 result = measure(a);
+    return result;
+}

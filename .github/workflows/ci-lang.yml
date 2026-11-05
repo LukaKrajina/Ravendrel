@@ -1,0 +1,82 @@
+name: CI - Language Toolchain
+
+# Ravendrel 语言工具链(server/client/installer)的构建 + 测试流水线。
+# 与 ci.yml(C++ runtime/rvdlRSP)互补,覆盖 TypeScript 编译器前端与 Go 安装器。
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  server-test:
+    name: Server & Client (TypeScript)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Test
+        run: npm test
+
+  client-integration:
+    name: Client Integration Test (VSCode, headless)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Run integration tests
+        run: xvfb-run -a npm run test:integration
+
+  installer-build-linux:
+    name: Installer (Go, Linux)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Build
+        run: cd installer && go build ./...
+
+      - name: Vet
+        run: cd installer && go vet ./...
+
+  installer-build-windows:
+    name: Installer (Go, Windows)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Build
+        run: cd installer && go build ./...

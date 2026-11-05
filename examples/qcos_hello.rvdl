@@ -1,0 +1,39 @@
+// ============================================================================
+//  QCOS syscall ABI + QMS 数值内核演示
+//
+//  系统调用号：
+//      SYS_LOG = 1    SYS_YIELD = 2    SYS_EXIT = 3    SYS_TIME = 10
+//
+//  噪声信道模型（rvdl_qms_gap 的第一个参数）：
+//      0 = 去极化 (Depolarizing)
+//      1 = 去相位 (Dephasing)
+//      2 = 振幅阻尼 (Amplitude Damping)
+//      3 = Pauli 信道
+//
+//  运行： rvdl run examples/qcos_hello.rvdl
+//         rvdl ir   examples/qcos_hello.rvdl     （只生成 LLVM IR，不连守护进程）
+// ============================================================================
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // ---- QCOS 控制台输出 ----
+    rvdl_sys_log(2, "QCOS: hello from RVDL");
+    rvdl_sys_logi(2, 42);
+
+    // ---- 让出执行单元，并读取单调时钟（毫秒）----
+    rvdl_sys_call(2, 0, 0, 0);
+    int32 tick = rvdl_sys_call(10, 0, 0, 0);
+    rvdl_sys_logi(2, tick);
+
+    // ---- 由谱隙推导混合时间 ----
+    //  去极化信道 p = 0.01 的谱隙恰为 0.01
+    double gap  = rvdl_qms_gap(0, 0.01, 0.0);
+    //  有效状态空间规模 n = 1024、精度 eps = 0.01 下的混合时间上界
+    double tmix = rvdl_mix_bound(gap, 1024.0, 0.01);
+    //  L2 方差收缩到 1% 所需时间（Poincare 不等式 p=2 推论）
+    double tvar = rvdl_qms_conc(gap, 0.01);
+
+    rvdl_sys_log(2, "QCOS: QMS bounds computed");
+
+    return 0;
+}

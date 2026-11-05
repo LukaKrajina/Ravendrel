@@ -1,0 +1,17 @@
+{
+    "toolbar.open": "Öffnen",
+    "toolbar.save": "Speichern",
+    "toolbar.run": "▶ Ausführen",
+    "toolbar.clear": "Ausgabe leeren",
+    "toolbar.hint": "Vor dem Ausführen runtime --daemon starten",
+    "status.untitled": "Unbenannt",
+    "status.modified": "Geändert",
+    "status.opened": "Geöffnet",
+    "status.saved": "Gespeichert",
+    "status.compiling": "Kompiliere...",
+    "status.success": "Kompilierung erfolgreich",
+    "status.fail": "Kompilierung fehlgeschlagen",
+    "shell.opened": "Geöffnet",
+    "shell.saved": "Gespeichert",
+    "shell.compiling": "Kompiliere..."
+}

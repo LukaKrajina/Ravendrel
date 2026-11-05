@@ -1,0 +1,70 @@
+// ============================================================================
+//  纯 RVDL 编写的 QCOS 内核 + 量子服务下沉（QMS）
+//
+//  集成：
+//    1. 串口驱动（16550 UART，outb/inb）
+//    2. 量子服务下沉：调用 rvdl_qms_gap / rvdl_mix_bound / rvdl_qms_conc
+//       —— 谱隙 / 混合界 / 方差收缩时间，已从宿主 libm 转移为裸机
+//       freestanding 实现（runtime/include/qcos/Qms.hpp + rvdl_shim.cpp）。
+//
+//  输出（COM1 串口）：
+//      "QCOS" + 'G'（谱隙为正）+ 'M'（混合界有限）+ 'C'（方差收缩有限）
+//  之后停机。期望串口读到：QCOSGMC
+//
+//  构建：.\scripts\build-qcos-kernel.ps1 -Source examples\qcos_quantum_service.rvdl
+//  运行：qemu-system-x86_64 -kernel <elf> -display none -serial stdio
+// ============================================================================
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // ---- 串口初始化（16550 UART，COM1 = 0x3F8 = 1016）----
+    outb(1019, 0);    // LCR 置 0
+    outb(1017, 0);    // IER 关中断
+    outb(1019, 128);  // LCR 使能 DLAB
+    outb(1016, 3);    // 波特率 38400 低字节
+    outb(1017, 0);    // 波特率高字节
+    outb(1019, 3);    // 8N1，关 DLAB
+    outb(1018, 199);  // 使能 FIFO 并清空
+    outb(1020, 11);   // IRQ 使能，RTS/DSR
+
+    // ---- 谱隙 / 混合界 / 方差收缩时间 ----
+    //   去极化信道 p=0.01 的谱隙恰为 0.01（精确解析值，见 qcos/Qms.hpp）
+    double gap  = rvdl_qms_gap(0, 0.01, 0.0);        // 0.01
+    double tmix = rvdl_mix_bound(gap, 1024.0, 0.01); // ln(102400)/0.01 ≈ 1153
+    double tvar = rvdl_qms_conc(gap, 0.01);          // ln(100)/0.02 ≈ 230
+
+    // ---- 写 "QCOS" ----
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 81);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 67);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 79);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 83);
+
+    // ---- 谱隙为正 -> 写 'G'----
+    if (gap > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 71);
+    }
+
+    // ---- 混合界有限 -> 写 'M' ----
+    if (tmix > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 77);
+    }
+
+    // ---- 方差收缩有限 -> 写 'C' ----
+    if (tvar > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 67);
+    }
+
+    // ---- 停机 ----
+    unsafe {
+        native("hlt");
+    }
+
+    return 0;
+}

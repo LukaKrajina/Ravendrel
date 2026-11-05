@@ -1,0 +1,63 @@
+# 源码（只打包编译产物）
+client/src/**
+server/src/**
+
+# 测试
+client/out/test/**
+
+# 应用图标（扩展只需 ravendrel-dark/light.svg + icon theme）
+icons/runtime*
+icons/rsp*
+icons/*.ico
+icons/*.rc
+icons/*-512.png
+
+# 无关子项目与大目录
+runtime/**
+rvdlRSP/**
+SE/**
+chatWebUI/**
+docs/**
+examples/**
+installer/**
+scripts/**
+vcpkg/**
+release/**
+
+# 杂项
+.git/**
+.vscode/**
+.gitignore
+.gitattributes
+.vscodeignore
+*.vsix
+**/*.tsbuildinfo
+**/tsconfig*.json
+build.bat
+esbuild.mjs
+package-lock.json
+COMMIT_MSG.txt
+server/rvdl.cmd
+
+# 开发工具配置
+.clang-format
+.clang-tidy
+.clangd
+.gitmessage
+.editorconfig
+.github/**
+sign_clang.ps1
+
+# 本地构建与临时目录
+.deps/**
+.tmp-win-runtime/**
+.codebuddy/**
+
+# node_modules（已 bundle 进 client/out/extension.js 与 server/out/server.js，无需打包）
+node_modules/**
+
+# 编译产物：只保留 esbuild 单文件入口，排除中间产物与测试
+server/out/**
+!server/out/server.js
+client/out/**
+!client/out/extension.js

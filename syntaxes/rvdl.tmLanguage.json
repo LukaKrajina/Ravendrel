@@ -1,0 +1,162 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Ravendrel",
+  "scopeName": "source.ravendrel",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#constants" },
+    { "include": "#annotations" },
+    { "include": "#types" },
+    { "include": "#keywords" },
+    { "include": "#functions" }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.line.ravendrel",
+      "match": "//.*$"
+    },
+    "annotations": {
+      "patterns": [
+        { "include": "#layer-tag" },
+        {
+          "name": "keyword.declaration.ravendrel",
+          "match": "@layer\\b"
+        },
+        {
+          "name": "entity.name.tag.ravendrel",
+          "match": "@\\[[a-z_]+"
+        }
+      ]
+    },
+    "layer-tag": {
+      "begin": "(@layer)\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "keyword.declaration.layer.ravendrel" },
+        "2": { "name": "punctuation.section.layer.begin.ravendrel" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.layer.end.ravendrel" }
+      },
+      "contentName": "meta.layer.ravendrel",
+      "patterns": [
+        { "include": "#layer-list-value" },
+        { "include": "#layer-enum-value" },
+        { "include": "#layer-scalar-key" },
+        { "include": "#numbers" },
+        { "include": "#strings" },
+        { "include": "#constants" }
+      ]
+    },
+    "layer-list-value": {
+      "begin": "\\b(coord|shuttle|track)(\\s*)(=)(\\s*)(\\()",
+      "beginCaptures": {
+        "1": { "name": "variable.parameter.layer.ravendrel" },
+        "3": { "name": "keyword.operator.assignment.ravendrel" },
+        "5": { "name": "punctuation.section.list.begin.ravendrel" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.list.end.ravendrel" }
+      },
+      "patterns": [
+        {
+          "name": "variable.other.observable.ravendrel",
+          "match": "[A-Za-z_][A-Za-z0-9_]*"
+        },
+        { "include": "#numbers" }
+      ]
+    },
+    "layer-enum-value": {
+      "match": "\\b(shuttle_phase|shuttle_strategy|track_mode)(\\s*)(=)(\\s*)(-?\\d+)",
+      "captures": {
+        "1": { "name": "variable.parameter.layer.ravendrel" },
+        "3": { "name": "keyword.operator.assignment.ravendrel" },
+        "5": { "name": "support.constant.layer.ravendrel" }
+      }
+    },
+    "layer-scalar-key": {
+      "match": "\\b(time|thread|cost|deadline|dual|shuttle_lambda|shuttle_rounds|track_slots)(\\s*)(=)",
+      "captures": {
+        "1": { "name": "variable.parameter.layer.ravendrel" },
+        "3": { "name": "keyword.operator.assignment.ravendrel" }
+      }
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.ravendrel",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.ravendrel", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.quoted.single.ravendrel",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "name": "constant.character.escape.ravendrel", "match": "\\\\." }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "name": "constant.numeric.hex.ravendrel", "match": "\\b0[xX][0-9a-fA-F]+\\b" },
+        { "name": "constant.numeric.ravendrel", "match": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b" }
+      ]
+    },
+    "constants": {
+      "name": "constant.language.ravendrel",
+      "match": "\\b(true|false|null)\\b"
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.classical.ravendrel",
+          "match": "\\b(int|int8|int16|int32|int64|uint8|uint16|uint32|uint64|float|double|string|char|bool)\\b"
+        },
+        {
+          "name": "storage.type.quantum.ravendrel",
+          "match": "\\b(Qubit|QObject|QModel|QRegister|Result|DiracState|BellState|QuantumRegister|QReservoir)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.ravendrel",
+          "match": "\\b(if|else|while|for|return|break|continue|spawn|entangle|spin|route|fuse|fallback|new|auto|let|fn|result|unsafe)\\b"
+        },
+        {
+          "name": "keyword.other.ravendrel",
+          "match": "\\b(mod|use|pub|form|impl|trait|template|rank|self|lattice|export|import|extern|requires|ensures|invariant|from|make|cap|native|fixed|flavor|morph|addr|basis_state|path)\\b"
+        },
+        {
+          "name": "keyword.operator.stringify.ravendrel",
+          "match": "#\\$\\w+"
+        },
+        {
+          "name": "variable.other.metavariable.ravendrel",
+          "match": "\\$\\w+"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "support.function.quantum.ravendrel",
+          "match": "\\b(alloc|measure|measure_x|measure_y|encode_text|encode_image|qlm_invoke|qlm_load|qlm_forward|mind_read|mind_train|mind_feedback|veda_qlm_train|h|x|rz|cnot|toffoli|swap|qft|iqft|braid|cx|ch|crz|cswap|c_toffoli|cqft|cbraid)\\b"
+        },
+        {
+          "name": "support.function.builtin.ravendrel",
+          "match": "\\b(qchain_[a-z_]+|qk_[a-z_]+|sync_[a-z_]+|cgui_[a-z_]+|cgfx_[a-z_]+|qgfx_[a-z_]+|qqui_[a-z_]+|qrc_[a-z_]+|lattice_[a-z_]+|qstate_[a-z_]+|outb|inb|surrogate|tanh_quantize|lif_step|mellowmax2|logsumexp2|boltzmann2|tnorm_luk|tnorm_prod|tnorm_godel|polymer_weight|polymer_mix_bound|math_dot|math_norm|tau_alpha|tau_generational|tau_fold_depth|tau_gear_ratio|tau_route_cost|tau_route_price)\\b"
+        }
+      ]
+    }
+  }
+}

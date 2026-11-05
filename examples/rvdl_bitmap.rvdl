@@ -1,0 +1,37 @@
+// ============================================================================
+//  用 RVDL 编写的位图内存分配器（PMM v1：BitmapPmm 的位图原语）
+//
+//  用 cap<int32> + 指针算术 + 位运算实现物理页的 set_bit / test_bit / clear_bit。
+//  这是 v1 位图分配器的核心原语；v2「驯龙系统」（伙伴系统 + 空闲链表）见
+//  rvdl_buddy.rvdl，C++ 实现见 runtime/include/qcos/DragonPmm.hpp。
+//  预期返回值 100：
+//    set5=1（置位成功）, set6=0（空闲）, cleared=0（释放成功）
+//    = 100*1 + 10*0 + 0 = 100
+// ============================================================================
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 分配 16 字节 = 4 个 int32 字（32 位位图 = 32 页）
+    cap<int32> bitmap = rvdl_gc_alloc(16);
+
+    // 初始化全 0（空闲）
+    *(bitmap + 0) = 0;
+    *(bitmap + 1) = 0;
+    *(bitmap + 2) = 0;
+    *(bitmap + 3) = 0;
+
+    // 分配页 5：set_bit（word 0 的 bit 5）
+    *(bitmap + 0) = *(bitmap + 0) | (1 << 5);
+
+    // 检查 bit 5 已置位、bit 6 空闲
+    int32 set5 = (*(bitmap + 0) >> 5) & 1;
+    int32 set6 = (*(bitmap + 0) >> 6) & 1;
+
+    // 释放页 5：clear_bit
+    *(bitmap + 0) = *(bitmap + 0) & (~(1 << 5));
+
+    // 释放后 bit 5 应为 0
+    int32 cleared = (*(bitmap + 0) >> 5) & 1;
+
+    return 100 * set5 + 10 * set6 + cleared;
+}

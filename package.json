@@ -1,0 +1,252 @@
+{
+  "name": "ravendrel-lang",
+  "displayName": "Ravendrel Language Support",
+  "description": "Language support for the Ravendrel Quantum Programming Language (.rvdl)",
+  "version": "0.3.3",
+  "publisher": "ravendrelproject",
+  "icon": "icons/marketplace.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LukaKrajina/Ravendrel.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "AI",
+    "Data Science",
+    "Notebooks",
+    "Education"
+  ],
+  "main": "./client/out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "ravendrel",
+        "aliases": [
+          "Ravendrel",
+          "ravendrel"
+        ],
+        "extensions": [
+          ".rvdl",
+          ".qk"
+        ],
+        "icon": {
+          "light": "./icons/ravendrel-light.svg",
+          "dark": "./icons/ravendrel-dark.svg"
+        },
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "ravendrel-icons",
+        "label": "Ravendrel File Icons",
+        "path": "./icons/ravendrel-file-icon-theme.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ravendrel",
+        "scopeName": "source.ravendrel",
+        "path": "./syntaxes/rvdl.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "ravendrel.runScript",
+        "title": "Run Ravendrel Script",
+        "icon": "$(play)"
+      },
+      {
+        "command": "ravendrel.compileScript",
+        "title": "Compile Ravendrel Script (AOT)",
+        "icon": "$(package)"
+      },
+      {
+        "command": "ravendrel.buildScript",
+        "title": "Build Ravendrel Script (IR)",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "ravendrel.migrateScript",
+        "title": "Migrate to rvdl",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "ravendrel.setCompileTarget",
+        "title": "Set Compile Target",
+        "icon": "$(settings)"
+      },
+      {
+        "command": "ravendrel.refreshQuantumState",
+        "title": "Refresh Quantum State",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "ravendrel.clearPerformance",
+        "title": "Clear Performance History",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "ravendrel.buildApk",
+        "title": "Build APK (Android)",
+        "icon": "$(device-mobile)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ravendrel-sidebar",
+          "title": "Ravendrel",
+          "icon": "icons/ravendrel-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "ravendrel-sidebar": [
+        {
+          "id": "ravendrel.targetPlatform",
+          "name": "编译目标",
+          "icon": "$(target)"
+        },
+        {
+          "id": "ravendrel.actions",
+          "name": "操作",
+          "icon": "$(play)"
+        },
+        {
+          "id": "ravendrel.performance",
+          "name": "性能监测",
+          "type": "webview",
+          "icon": "$(dashboard)"
+        },
+        {
+          "id": "ravendrel.quantumState",
+          "name": "量子对象与比特",
+          "type": "webview",
+          "icon": "$(circuit-board)"
+        }
+      ]
+    },
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "ravendrel.runScript",
+          "when": "resourceLangId == ravendrel",
+          "group": "navigation"
+        },
+        {
+          "command": "ravendrel.compileScript",
+          "when": "resourceLangId == ravendrel",
+          "group": "navigation"
+        },
+        {
+          "command": "ravendrel.buildScript",
+          "when": "resourceLangId == ravendrel",
+          "group": "navigation"
+        },
+        {
+          "command": "ravendrel.buildApk",
+          "when": "resourceLangId == ravendrel",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "ravendrel.migrateScript",
+          "when": "resourceExtname == .qasm || resourceExtname == .qs || resourceExtname == .quil || resourceExtname == .slq",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "ravendrel.migrateScript",
+          "when": "resourceExtname == .qasm || resourceExtname == .qs || resourceExtname == .quil || resourceExtname == .slq",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "ravendrel.refreshQuantumState",
+          "when": "view == ravendrel.quantumState",
+          "group": "navigation"
+        },
+        {
+          "command": "ravendrel.clearPerformance",
+          "when": "view == ravendrel.performance",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "ravendrel.runScript",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n",
+        "when": "editorTextFocus && editorLangId == ravendrel"
+      },
+      {
+        "command": "ravendrel.compileScript",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "editorTextFocus && editorLangId == ravendrel"
+      },
+      {
+        "command": "ravendrel.buildScript",
+        "key": "ctrl+alt+b",
+        "mac": "cmd+alt+b",
+        "when": "editorTextFocus && editorLangId == ravendrel"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc --noEmit -p client/tsconfig.json && tsc --noEmit -p server/tsconfig.json && node esbuild.mjs",
+    "watch": "tsc -b client/tsconfig.json server/tsconfig.json -w",
+    "test": "tsc -b server/tsconfig.json && node --test \"server/out/*.test.js\"",
+    "test:integration": "tsc -b client/tsconfig.json server/tsconfig.json && node client/out/test/runTest.js",
+    "prepare:runtime:win": "powershell -ExecutionPolicy Bypass -File scripts/prepare-vsix-runtime.ps1",
+    "prepare:runtime:linux": "bash scripts/prepare-vsix-runtime.sh",
+    "package": "npx @vscode/vsce package",
+    "package:linux": "bash scripts/package-vsix.sh --linux",
+    "package:win": "bash scripts/package-vsix.sh --win",
+    "package:all": "bash scripts/package-vsix.sh --all",
+    "package:universal": "bash scripts/package-vsix-universal.sh"
+  },
+  "keywords": [
+    "quantum",
+    "quantum computing",
+    "quantum programming",
+    "programming language",
+    "quantum language",
+    "artificial intelligence",
+    "machine learning",
+    "robotics",
+    "robot operating system",
+    "quantum robotics",
+    "quantum machine learning",
+    "brain-computer interface",
+    "rvdl",
+    "ravendrel"
+  ],
+  "author": "RavendrelProject",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^25.5.0",
+    "@types/vscode": "~1.80.0",
+    "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.28.2",
+    "mocha": "^10.4.0",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,0 +1,47 @@
+; Fox C ABI —— 由 rvdl_rt.dll 导出给桌面宿主（OpenButler Shell）使用。
+;
+; 之所以需要这份 .def：
+;   fox_core 是静态库，链接进 rvdl_rt 后默认只保留「rvdl 自己引用到」的
+;   目标文件，且 fox.h 里没有任何 __declspec(dllexport)。宿主（MinGW g++）
+;   通过 -lrvdl_rt 调用 fox_*，链接期就会 undefined reference。
+;   这里按符号名强制导出，链接器因此会把 fox.cpp 整个拉进来。
+;
+; 只列宿主实际用到的 36 个；rvdl 内部用的 fox 符号不需要导出。
+LIBRARY rvdl_rt
+EXPORTS
+    fox_begin_frame
+    fox_char
+    fox_char_pending
+    fox_clip_pop
+    fox_create
+    fox_ctrl
+    fox_destroy
+    fox_dt
+    fox_dump_ppm
+    fox_end_frame
+    fox_fill_ellipse
+    fox_fill_rect
+    fox_glyph_count
+    fox_height
+    fox_image
+    fox_key_ascii_down
+    fox_key_ascii_pressed
+    fox_key_down
+    fox_key_pressed
+    fox_label
+    fox_mouse_down
+    fox_mouse_pressed
+    fox_mouse_wheel
+    fox_mouse_x
+    fox_mouse_y
+    fox_poll_events
+    fox_push_clip
+    fox_set_theme
+    fox_should_close
+    fox_text_height
+    fox_text_lines
+    fox_text_width
+    fox_texture_create
+    fox_texture_update
+    fox_time
+    fox_width

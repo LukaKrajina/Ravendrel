@@ -1,0 +1,36 @@
+// 量子加密原语 + 抗超时空 + 时空加密示例（供 rvdl 开发者）
+//
+// 展示 qchain 暴露给 rvdl 语言的密码学 / 抗超时空 / 时空加密能力：
+//   1. 哈希：SHA3-256 / HMAC-SHA256 / UnicodeHash256（汉字→拼音→SHA-256）
+//   2. 后量子签名：ML-DSA-65（FIPS 204）
+//   3. 后量子 KEM：ML-KEM-768（FIPS 203）
+//   4. 因果哨兵：快子场能量守恒 + 额外维对称（防超时空）
+//   5. 时空加密：快子场混沌 keystream + SHA-256 OFB（抗破解）
+//
+// 运行前请先启动守护进程：./runtime --daemon
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 哈希原语
+    string h1 = qchain_sha3("hello quantum chain");          // SHA3-256（hex）
+    string h2 = qchain_hmac("deadbeef", "authenticate me");  // HMAC-SHA256（hex）
+    string h3 = qchain_hash_unicode("我爱你");               // 语义哈希（"woaini" 的 SHA-256）
+
+    // 后量子签名（ML-DSA-65，全局密钥）
+    string sig = qchain_sign("quantum transaction payload");
+    int32 sig_ok = qchain_sign_verify("quantum transaction payload", sig);
+    string pk = qchain_sign_pubkey();                        // 全局公钥
+
+    // 后量子 KEM（ML-KEM-768）
+    // 值得一提的是这里用全局签名公钥作为 KEM 公钥仅为示例，实际得自行独立生成。
+    string encapsulated = qchain_mlkem_encaps(pk);           // "ct:ss"（hex）
+
+    // 因果哨兵（防超时空）
+    int32 causal_ok = qchain_causal_verify();
+
+    // 时空加密（OFB 流加密，seed 为共享密钥）
+    string ct = qchain_cipher_encrypt(12345, "top secret message");
+    string pt = qchain_cipher_decrypt(12345, ct);
+
+    return sig_ok;
+}

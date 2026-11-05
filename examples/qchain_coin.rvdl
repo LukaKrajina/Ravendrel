@@ -1,0 +1,41 @@
+// 量子币种 + 量子区块链服务示例
+//
+// 用 qchain 内置函数在 rvdl 语言里完成：
+//   1. 创建后量子钱包（ML-DSA / SLH-DSA 抗量子签名地址）
+//   2. 铸币 / 转账 / 查余额（记账式量子代币）
+//   3. 量子 PoW 出块 + 验链（哈希链 + 量子纠缠链接）
+//   4. BB84 量子密钥分发（QKD 共享密钥）
+//   5. 铸不可克隆量子钞票（Wiesner 量子货币）
+//   6. 量子拜占庭共识（GHZ 态 QDBA）
+//
+// 运行前请先启动守护进程（一般后台永驻）：./runtime --daemon
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    // 创建两个后量子钱包（返回量子安全地址）
+    string alice = qchain_wallet();
+    string bob = qchain_wallet();
+
+    // 铸币：给 alice 发 100 万，再转账给 bob 500
+    qchain_mint(alice, 1000000);
+    int32 ok = qchain_transfer(alice, bob, 500);
+
+    // 查询余额
+    uint64 bal = qchain_balance(alice);
+
+    // 量子 PoW 出块 + 验链
+    int32 height = qchain_mine();
+    int32 valid = qchain_verify();
+
+    // BB84 量子密钥分发（64 轮）
+    string key = qchain_qkd(64);
+
+    // 铸不可克隆量子钞票（8 量子比特）并验证
+    QObject coin = qchain_coin_mint(8);
+    int32 coin_ok = qchain_coin_verify(coin);
+
+    // 量子拜占庭共识（5 参与方）
+    int32 agreed = qchain_qdba(5);
+
+    return ok;
+}

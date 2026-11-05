@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="theme-dark.svg">icons/theme-dark.svg</file>
+        <file alias="theme-light.svg">icons/theme-light.svg</file>
+        <file alias="play.svg">icons/play.svg</file>
+        <file alias="pause.svg">icons/pause.svg</file>
+        <file alias="step.svg">icons/step.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+// 脑控编程 + 大脑训练 QLM 示例
+// 1. 读取脑电信号 -> QBNS Transducer 编码为量子态
+// 2. 意念驱动一次测量（脑控计算）
+// 3. 用脑信号数据集训练 QLM 并导出模型
+// 4. 神经反馈闭环
+
+let brain_state = mind_read("eeg");      // 脑电 -> 量子态
+let bits = brain_state.measure;          // 意念驱动的测量
+mind_train(brain_state, 200, 0.01);      // 大脑训练 QLM
+mind_feedback(brain_state);              // 神经反馈

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>Ravendrel Interface</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="stylesheet" href="/src/style.css" />
+    </head>
+    <body
+        class="h-screen w-screen overflow-hidden text-slate-900 dark:text-slate-50 font-sans transition-colors duration-300 relative bg-slate-50 dark:bg-slate-900 selection:bg-blue-500/30"
+    >
+        <!-- Animated Background Mesh for Frosted Glass Refraction -->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div
+                class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-300/40 dark:bg-blue-600/20 blur-[120px]"
+            ></div>
+            <div
+                class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-300/40 dark:bg-indigo-600/20 blur-[120px]"
+            ></div>
+        </div>
+
+        <!-- Main Glass Container -->
+        <div class="relative z-10 flex h-full w-full bg-white/20 dark:bg-black/10 backdrop-blur-[2px]">
+            <!-- Left Sidebar -->
+            <aside
+                id="sidebar"
+                class="absolute md:static inset-y-0 left-0 z-50 w-72 flex flex-col border-r border-white/40 dark:border-white/10 bg-white/60 dark:bg-black/30 backdrop-blur-2xl -translate-x-full md:translate-x-0 transition-transform duration-300"
+            >
+                <!-- Logo + Collapse -->
+                <div class="flex items-center justify-between p-5 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 border border-white/30"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="white"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </div>
+                        <span class="font-semibold tracking-tight">Ravendrel</span>
+                    </div>
+                    <button
+                        id="collapse-btn"
+                        class="p-2 rounded-lg hover:bg-white/60 dark:hover:bg-white/10 transition-all text-slate-500 dark:text-slate-400"
+                        data-i18n-title="sidebar.collapse"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <polyline points="11 17 6 12 11 7" />
+                            <polyline points="18 17 13 12 18 7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- New Session -->
+                <div class="px-5 pb-3">
+                    <button
+                        id="new-chat-btn"
+                        class="w-full py-3 px-4 bg-white/60 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 rounded-xl text-sm font-semibold transition-all shadow-sm backdrop-blur-md flex items-center justify-center gap-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span data-i18n="sidebar.newSession">New Session</span>
+                    </button>
+                </div>
+
+                <!-- History -->
+                <div class="flex-1 overflow-y-auto px-3 scroll-smooth">
+                    <p
+                        class="px-4 pt-2 pb-1 text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500"
+                        data-i18n="sidebar.history"
+                    >
+                        History
+                    </p>
+                    <div id="chat-history-list" class="space-y-1.5 pb-4"></div>
+                </div>
+
+                <!-- Bottom -->
+                <div class="p-4 border-t border-white/40 dark:border-white/10 space-y-3">
+                    <button
+                        id="theme-toggle"
+                        class="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-white/30 dark:bg-black/30 hover:bg-white/60 dark:hover:bg-white/10 border border-transparent hover:border-white/40 dark:hover:border-white/10 transition-all text-sm font-medium backdrop-blur-md"
+                    >
+                        <span data-i18n="sidebar.toggleTheme">Toggle Theme</span>
+                        <svg
+                            id="theme-icon-dark"
+                            class="hidden w-4 h-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg
+                            id="theme-icon-light"
+                            class="w-4 h-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                    <div class="flex items-center justify-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+                        <a
+                            href="javascript:void(0)"
+                            class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                            data-i18n="sidebar.help"
+                            >Help</a
+                        >
+                        <select
+                            id="language-select"
+                            class="bg-transparent text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-pointer"
+                            aria-label="Language"
+                        >
+                            <option value="en">English</option>
+                            <option value="zh">中文</option>
+                            <option value="ru">Русский</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                        <a
+                            href="javascript:void(0)"
+                            class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                            data-i18n="sidebar.about"
+                            >About</a
+                        >
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="flex-1 flex flex-col relative min-w-0">
+                <header
+                    class="h-16 flex items-center justify-between px-4 md:px-6 border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-xl"
+                >
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button
+                            id="menu-btn"
+                            class="md:hidden p-2 rounded-lg hover:bg-white/60 dark:hover:bg-white/10 transition-all text-slate-600 dark:text-slate-300"
+                            data-i18n-title="header.menu"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <line x1="3" y1="12" x2="21" y2="12" />
+                                <line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        </button>
+                        <h1 class="text-lg font-semibold tracking-tight truncate">Chaos Fluid Predictor</h1>
+                        <span
+                            class="hidden sm:inline text-xs text-slate-600 dark:text-slate-300 font-mono border border-slate-300/50 dark:border-slate-600/50 px-2 py-1 rounded-lg bg-white/50 dark:bg-black/30 shadow-sm"
+                            >.rvdlm</span
+                        >
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <select
+                            id="model-select"
+                            class="text-xs font-mono px-3 py-2 rounded-lg bg-white/50 dark:bg-black/30 border border-slate-300/50 dark:border-slate-600/50 shadow-sm backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-700 dark:text-slate-200"
+                        >
+                            <option value="chaos_fluid_predictor.rvdlm">chaos_fluid_predictor.rvdlm</option>
+                        </select>
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                            ></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                    </div>
+                </header>
+
+                <!-- Welcome / Empty State -->
+                <div
+                    id="welcome-screen"
+                    class="flex-1 flex flex-col items-center justify-center gap-8 px-6 overflow-y-auto scroll-smooth"
+                >
+                    <div class="flex flex-col items-center gap-3 animate-[fadeIn_.6s_ease]">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 border border-white/30"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="30"
+                                height="30"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="white"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </div>
+                        <h2
+                            class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-800 dark:text-slate-100"
+                            data-i18n="welcome.title"
+                        >
+                            Ask anything, or task an agent...
+                        </h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="welcome.subtitle">
+                            Local inference on QKM · chaos_fluid_predictor
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
+                        <button
+                            class="suggestion-card text-left px-5 py-4 rounded-2xl bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 border border-white/50 dark:border-white/10 backdrop-blur-md shadow-sm transition-all"
+                            data-i18n-prompt="suggestion.analyze.prompt"
+                            data-prompt="帮我分析这段代码"
+                        >
+                            <span
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                                data-i18n="suggestion.analyze"
+                                >帮我分析这段代码</span
+                            >
+                            <span
+                                class="block mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                data-i18n="suggestion.analyze.sub"
+                                >Code review & explanation</span
+                            >
+                        </button>
+                        <button
+                            class="suggestion-card text-left px-5 py-4 rounded-2xl bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 border border-white/50 dark:border-white/10 backdrop-blur-md shadow-sm transition-all"
+                            data-i18n-prompt="suggestion.summarize.prompt"
+                            data-prompt="用一句话总结一篇文章"
+                        >
+                            <span
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                                data-i18n="suggestion.summarize"
+                                >用一句话总结一篇文章</span
+                            >
+                            <span
+                                class="block mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                data-i18n="suggestion.summarize.sub"
+                                >Summarize & condense</span
+                            >
+                        </button>
+                        <button
+                            class="suggestion-card text-left px-5 py-4 rounded-2xl bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 border border-white/50 dark:border-white/10 backdrop-blur-md shadow-sm transition-all"
+                            data-i18n-prompt="suggestion.translate.prompt"
+                            data-prompt="翻译成英文并润色"
+                        >
+                            <span
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                                data-i18n="suggestion.translate"
+                                >翻译成英文并润色</span
+                            >
+                            <span
+                                class="block mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                data-i18n="suggestion.translate.sub"
+                                >Translate & polish</span
+                            >
+                        </button>
+                        <button
+                            class="suggestion-card text-left px-5 py-4 rounded-2xl bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 border border-white/50 dark:border-white/10 backdrop-blur-md shadow-sm transition-all"
+                            data-i18n-prompt="suggestion.explain.prompt"
+                            data-prompt="解释一个物理或数学概念"
+                        >
+                            <span
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                                data-i18n="suggestion.explain"
+                                >解释一个物理/数学概念</span
+                            >
+                            <span
+                                class="block mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                data-i18n="suggestion.explain.sub"
+                                >Explain a concept</span
+                            >
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div
+                    id="messages-container"
+                    class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 pb-40 scroll-smooth hidden"
+                ></div>
+
+                <!-- Input Box -->
+                <div
+                    class="absolute bottom-0 w-full p-4 md:p-6 bg-gradient-to-t from-slate-100 via-slate-100/90 to-transparent dark:from-slate-900 dark:via-slate-900/90 pointer-events-none"
+                >
+                    <div class="max-w-3xl mx-auto pointer-events-auto">
+                        <!-- Quick Chips -->
+                        <div class="flex flex-wrap gap-2 mb-3 justify-center">
+                            <button
+                                class="chip text-xs px-3 py-1.5 rounded-full bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/50 dark:border-white/10 text-slate-600 dark:text-slate-300 backdrop-blur-md transition-all"
+                                data-i18n-prompt="chip.weekly.prompt"
+                                data-i18n="chip.weekly"
+                                data-prompt="帮我写一份周报"
+                            >
+                                写周报
+                            </button>
+                            <button
+                                class="chip text-xs px-3 py-1.5 rounded-full bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/50 dark:border-white/10 text-slate-600 dark:text-slate-300 backdrop-blur-md transition-all"
+                                data-i18n-prompt="chip.polish.prompt"
+                                data-i18n="chip.polish"
+                                data-prompt="请帮我润色这段文字："
+                            >
+                                润色
+                            </button>
+                            <button
+                                class="chip text-xs px-3 py-1.5 rounded-full bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/50 dark:border-white/10 text-slate-600 dark:text-slate-300 backdrop-blur-md transition-all"
+                                data-i18n-prompt="chip.translate.prompt"
+                                data-i18n="chip.translate"
+                                data-prompt="请翻译成英文："
+                            >
+                                翻译
+                            </button>
+                            <button
+                                class="chip text-xs px-3 py-1.5 rounded-full bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 border border-white/50 dark:border-white/10 text-slate-600 dark:text-slate-300 backdrop-blur-md transition-all"
+                                data-i18n-prompt="chip.explain.prompt"
+                                data-i18n="chip.explain"
+                                data-prompt="请解释这段代码："
+                            >
+                                解释代码
+                            </button>
+                        </div>
+
+                        <div class="relative group">
+                            <button
+                                id="attach-btn"
+                                class="absolute left-3 bottom-2.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 p-2 rounded-xl transition-all"
+                                data-i18n-title="input.attach"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                                    />
+                                </svg>
+                            </button>
+                            <textarea
+                                id="prompt-input"
+                                rows="1"
+                                class="w-full bg-white/70 dark:bg-black/40 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-2xl pl-12 pr-14 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none shadow-xl transition-all dark:placeholder-slate-400"
+                                data-i18n-placeholder="input.placeholder"
+                                placeholder="Message Ravendrel..."
+                            ></textarea>
+                            <button
+                                id="send-btn"
+                                class="absolute right-2 bottom-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 p-2.5 rounded-xl transition-all bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 backdrop-blur-md shadow-sm border border-transparent hover:border-white/50 dark:hover:border-white/10"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Mobile drawer overlay -->
+            <div
+                id="sidebar-overlay"
+                class="absolute inset-0 z-40 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+            ></div>
+        </div>
+
+        <input type="file" id="file-input" class="hidden" />
+        <script type="module" src="/src/main.ts"></script>
+    </body>
+</html>

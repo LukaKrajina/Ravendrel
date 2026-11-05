@@ -1,0 +1,249 @@
+; ModuleID = 'quark_module'
+source_filename = "quark_script.qk"
+
+; --- QIR Standard Library ---
+%Qubit = type opaque
+%QObject = type opaque
+%QModel = type opaque
+%QReservoir = type opaque
+; --- 晶格数组类型（lattice<T, B>，吸收 Futhark/Remora/Rust）---
+%Lattice = type opaque
+
+
+declare %QObject* @qk_create_DiracState(i32)
+declare %QObject* @qk_create_BellState()
+declare %QObject* @qk_create_QuantumRegister(i32)
+declare %QObject* @qk_create_basis_state(double, double, i32)
+declare %Qubit* @__quantum__rt__qubit_allocate()
+declare void @__quantum__rt__qubit_release(%Qubit*)
+declare i32 @__quantum__qis__measure_int(%Qubit*)
+
+; --- 扩展量子门（论文3 Hadamard/QFT/MUB + 论文5 Yang-Baxter braid）---
+declare void @__quantum__qis__h(%Qubit*)
+declare void @__quantum__qis__x(%Qubit*)
+declare void @__quantum__qis__y(%Qubit*)
+declare void @__quantum__qis__z(%Qubit*)
+declare void @__quantum__qis__s(%Qubit*)
+declare void @__quantum__qis__t(%Qubit*)
+declare void @__quantum__qis__rz(double, %Qubit*)
+declare void @__quantum__qis__rx(double, %Qubit*)
+declare void @__quantum__qis__ry(double, %Qubit*)
+declare void @__quantum__qis__cnot(%Qubit*, %Qubit*)
+declare void @__quantum__qis__toffoli(%Qubit*, %Qubit*, %Qubit*)
+declare void @__quantum__qis__swap(%Qubit*, %Qubit*)
+declare void @__quantum__qis__qft(i32)
+declare void @__quantum__qis__iqft(i32)
+declare void @__quantum__qis__cqft(%Qubit*, i32)
+declare void @__quantum__qis__braid(%Qubit*, %Qubit*)
+declare void @__quantum__qis__cbraid(%Qubit*, %Qubit*, %Qubit*)
+; --- 受控门（可逆编织 @[steer]：cx/ch/crz/cswap）---
+declare void @__quantum__qis__cx(%Qubit*, %Qubit*)
+declare void @__quantum__qis__ch(%Qubit*, %Qubit*)
+declare void @__quantum__qis__crz(%Qubit*, %Qubit*, double)
+declare void @__quantum__qis__cswap(%Qubit*, %Qubit*, %Qubit*)
+declare void @__quantum__qis__c_toffoli(%Qubit*, %Qubit*, %Qubit*, %Qubit*)
+declare void @__quantum__qis__apply_noise(%Qubit*, i32, double)
+declare i32 @__quantum__qis__measure_basis(%Qubit*, i8)
+declare i32 @qk_measure_object(%QObject*)
+declare %QObject* @qk_extract_qubit(%QObject*, i32)
+declare void @qk_release_object(%QObject*)
+
+; --- QML&QKM Native Trampolines ---
+declare %QObject* @qk_encode_text(i8*)
+declare %QObject* @qk_encode_amplitudes(i8*, i32)
+declare %QObject* @qk_encode_image(i8*, i32)
+declare %QObject* @qk_encode_adaptive(i8*)
+declare %QModel* @qk_qlm_invoke(%QObject*, i32, double)
+declare void @qk_qkm_export(%QModel*, i8*)
+
+; --- Quark AI Standard Library ABI ---
+declare %QModel* @qk_qlm_load(i8*)
+declare void @qk_qlm_forward(%QModel*, %QObject*)
+declare %QObject* @qk_encode_string(i8*)
+declare i8* @qk_decode_string(%QObject*)
+
+; --- QBNS Mind-Controlled Programming Trampolines ---
+declare %QObject* @qk_mind_read(i8*)
+declare void @qk_mind_train(%QObject*, i32, double)
+declare void @qk_mind_feedback(%QObject*)
+
+; --- VedaROS QLM Trampolines ---
+declare void @qk_veda_qlm_train(%QObject*, i32, double)
+
+; --- QRC Quantum Reservoir ABI ---
+declare %QReservoir* @qk_qrc_new(i32, i32)
+declare void @qk_qrc_train(%QReservoir*, i32, double)
+declare %QObject* @qk_qrc_probe(%QReservoir*, %QObject*)
+declare %QObject* @qk_qrc_predict(%QReservoir*, %QObject*)
+declare void @qk_qrc_release(%QReservoir*)
+
+; --- TQNF Topological Quantum Neural Field ABI ---
+declare i32 @qk_dla_dim(i8*, i32)
+declare double @qk_qstate_entropy(%QObject*)
+declare double @qk_qstate_fidelity(%QObject*, %QObject*)
+declare double @qk_qattention(%QObject*, %QObject*)
+declare double @qk_shannon4(i32, i32, i32, i32)
+declare double @qk_shannon8(i32, i32, i32, i32, i32, i32, i32, i32)
+declare void @qk_qgate_h(%QObject*, i32)
+declare void @qk_qgate_x(%QObject*, i32)
+declare void @qk_qgate_rz(%QObject*, i32, double)
+declare void @qk_qgate_cnot(%QObject*, i32, i32)
+declare double @qk_qexpect_z(%QObject*, i32)
+declare i32 @qk_qmeasure(%QObject*, i32)
+declare i32 @qk_qobj_num_qubits(%QObject*)
+declare void @qk_qgate_cnot_pair(%QObject*, i32, %QObject*, i32)
+
+; --- Other ---
+declare double @qk_surrogate(double, double, double)
+declare double @qk_tanh_quantize(double, double, i32)
+declare double @qk_lif_step(double, double, double, double)
+declare double @qk_mellowmax2(double, double, double)
+declare double @qk_logsumexp2(double, double, double)
+declare double @qk_boltzmann2(double, double, double)
+declare double @qk_tnorm_luk(double, double)
+declare double @qk_tnorm_prod(double, double)
+declare double @qk_tnorm_godel(double, double)
+declare double @qk_polymer_weight(double, double, double)
+declare double @qk_polymer_mix_bound(double, double)
+
+; --- 晶格数组 ABI（lattice<T, B>，首版 int32 元素 / 1D-2D）---
+declare %Lattice* @qk_lattice_new(i32, i32, i32, i32)
+declare void @qk_lattice_free(%Lattice*)
+declare i32 @qk_lattice_ref(%Lattice*, i32, i32)
+declare void @qk_lattice_set(%Lattice*, i32, i32, i32)
+declare i32 @qk_lattice_rank(%Lattice*)
+declare i32 @qk_lattice_size(%Lattice*, i32)
+declare i32 @qk_lattice_boundary(%Lattice*)
+
+; --- 经典 GUI / 图形引擎 ABI（cgui_* / cgfx_*）---
+declare i32 @qk_cgui_init(i32, i32, i8*)
+declare i32 @qk_cgui_should_close()
+declare void @qk_cgui_begin_frame()
+declare void @qk_cgui_end_frame()
+declare i32 @qk_cgui_button(i8*)
+declare void @qk_cgui_text(i8*)
+declare void @qk_cgui_text_int(i32)
+declare void @qk_cgui_beep(i32, i32)
+declare i32 @qk_cgui_width()
+declare i32 @qk_cgui_height()
+declare void @qk_cgui_panel(i32, i32, i32, i32, i8*)
+declare void @qk_cgui_panel_end()
+declare void @qk_cgui_row(i32, i32)
+declare i32 @qk_cgui_mouse_x()
+declare i32 @qk_cgui_mouse_y()
+declare i32 @qk_cgui_mouse_left_clicked()
+declare void @qk_cgfx_rect(i32, i32, i32, i32, i32)
+declare void @qk_cgfx_line(i32, i32, i32, i32, i32, i32)
+declare void @qk_cgfx_ellipse(i32, i32, i32, i32, i32)
+declare void @qk_cgfx_triangle(i32, i32, i32, i32, i32, i32, i32)
+declare void @qk_cgfx_rect_a(i32, i32, i32, i32, i32, i32)
+declare void @qk_cgfx_line_a(i32, i32, i32, i32, i32, i32, i32)
+declare void @qk_cgfx_ellipse_a(i32, i32, i32, i32, i32, i32)
+declare void @qk_cgfx_triangle_a(i32, i32, i32, i32, i32, i32, i32, i32)
+
+; --- QCOS Syscall ABI + Heap ---
+declare i32 @qk_sys_call(i32, i32, i32, i32)
+declare double @qk_sys_calld(i32, double, double)
+declare void @qk_sys_log(i32, i8*)
+declare i32 @qk_sys_logi(i32, i32)
+declare i8* @qk_gc_alloc(i64)
+declare i8* @qk_sys_callp(i32, i64, i64, i64)
+declare void @qk_gc_free(i8*)
+; --- 字符串遍历 / libc 子集 ---
+declare i32 @strlen(i8*)
+declare i8* @malloc(i64)
+declare void @free(i8*)
+declare i8* @memset(i8*, i32, i64)
+declare i8* @memcpy(i8*, i8*, i64)
+declare i32 @kglobals_addr()
+
+; --- QMS 数值内核 ---
+declare double @qk_qms_gap(i32, double, double)
+declare double @qk_mix_bound(double, double, double)
+declare double @qk_qms_conc(double, double)
+
+; --- QChain 量子区块链 ABI ---
+declare i8* @qk_qchain_wallet()
+declare i64 @qk_qchain_balance(i8*)
+declare void @qk_qchain_mint(i8*, i64)
+declare i32 @qk_qchain_transfer(i8*, i8*, i64)
+declare i32 @qk_qchain_mine()
+declare i32 @qk_qchain_height()
+declare i32 @qk_qchain_verify()
+declare i8* @qk_qchain_qkd(i32)
+declare i32 @qk_qchain_qdba(i32)
+declare %QObject* @qk_qchain_coin_mint(i32)
+declare i32 @qk_qchain_coin_verify(%QObject*)
+
+; --- QChain 密码原语 / 抗超时空 / 时空加密 ABI ---
+declare i8* @qk_qchain_sha3(i8*)
+declare i8* @qk_qchain_hmac(i8*, i8*)
+declare i8* @qk_qchain_hash_unicode(i8*)
+declare i8* @qk_qchain_sign(i8*)
+declare i32 @qk_qchain_sign_verify(i8*, i8*)
+declare i8* @qk_qchain_sign_pubkey()
+declare i8* @qk_qchain_mlkem_encaps(i8*)
+declare i8* @qk_qchain_mlkem_decaps(i8*, i8*)
+declare i32 @qk_qchain_causal_verify()
+declare i8* @qk_qchain_cipher_encrypt(i64, i8*)
+declare i8* @qk_qchain_cipher_decrypt(i64, i8*)
+
+; --- 多维标签函数执行拓扑（@layer）调度 ABI ---
+declare i32 @quark_runtime_run_topology(i8*)
+; --- 并发线程（spawn）ABI ---
+declare void @qk_spawn(i8*, i8*)
+
+
+define i32 @quark_main() {
+entry:
+ %iterations_ptr_1 = alloca i32
+ %count_ptr_2 = alloca i32
+ %total_ones_ptr_3 = alloca i32
+ %temp_meas_ptr_4 = alloca i32
+ %massive_reg_ptr_5 = alloca %QObject*
+ %bell_pair_ptr_9 = alloca %QObject*
+ store i32 50000, i32* %iterations_ptr_1
+ store i32 0, i32* %count_ptr_2
+ store i32 0, i32* %total_ones_ptr_3
+ store i32 0, i32* %temp_meas_ptr_4
+ %1 = call %QObject* @qk_create_QuantumRegister(i32 15)
+ store %QObject* %1, %QObject** %massive_reg_ptr_5
+ br label %while_cond_6
+
+while_cond_6:
+ %2 = load i32, i32* %count_ptr_2
+ %3 = load i32, i32* %iterations_ptr_1
+ %4 = icmp slt i32 %2, %3
+ br i1 %4, label %while_body_7, label %while_after_8
+
+while_body_7:
+ %5 = call %QObject* @qk_create_BellState()
+ store %QObject* %5, %QObject** %bell_pair_ptr_9
+ %6 = load %QObject*, %QObject** %bell_pair_ptr_9
+ %7 = call i32 @qk_measure_object(%QObject* %6)
+ store i32 %7, i32* %temp_meas_ptr_4
+ %8 = load i32, i32* %total_ones_ptr_3
+ %9 = load i32, i32* %temp_meas_ptr_4
+ %10 = add i32 %8, %9
+ store i32 %10, i32* %total_ones_ptr_3
+ %11 = load i32, i32* %count_ptr_2
+ %12 = add i32 %11, 1
+ store i32 %12, i32* %count_ptr_2
+ %13 = load %QObject*, %QObject** %bell_pair_ptr_9
+ call void @qk_release_object(%QObject* %13)
+ br label %while_cond_6
+
+while_after_8:
+ %14 = load i32, i32* %total_ones_ptr_3
+ %15 = load %QObject*, %QObject** %massive_reg_ptr_5
+ call void @qk_release_object(%QObject* %15)
+ ret i32 %14
+}
+; --- 多维标签函数执行拓扑（@layer）---
+@qk_topology_json = private unnamed_addr constant [149 x i8] c"{\22shape\22:{\22time\22:1,\22thread\22:1,\22coord\22:[1]},\22blocks\22:[{\22name\22:\22quark_main\22,\22time\22:0,\22thread\22:0,\22coord\22:[0],\22cost\22:1,\22deadline\22:null}],\22callGraph\22:[]}\00", align 1
+
+define i32 @qk_topology_entry() {
+entry:
+  %0 = call i32 @quark_runtime_run_topology(i8* getelementptr inbounds ([149 x i8], [149 x i8]* @qk_topology_json, i64 0, i64 0))
+  ret i32 %0
+}

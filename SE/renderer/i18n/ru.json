@@ -1,0 +1,17 @@
+{
+    "toolbar.open": "Открыть",
+    "toolbar.save": "Сохранить",
+    "toolbar.run": "▶ Выполнить",
+    "toolbar.clear": "Очистить вывод",
+    "toolbar.hint": "Запустите runtime --daemon перед выполнением",
+    "status.untitled": "Без названия",
+    "status.modified": "Изменено",
+    "status.opened": "Открыто",
+    "status.saved": "Сохранено",
+    "status.compiling": "Компиляция...",
+    "status.success": "Компиляция успешна",
+    "status.fail": "Ошибка компиляции",
+    "shell.opened": "Открыто",
+    "shell.saved": "Сохранено",
+    "shell.compiling": "Компиляция..."
+}

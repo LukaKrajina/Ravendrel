@@ -1,0 +1,9 @@
+// VedaROS QLM 训练示例
+// 1. 读取脑电信号 -> 量子态（QObject）
+// 2. 用已支持的 qlm_invoke 生成模型并导出
+// 3. 用新增的 veda_qlm_train 触发 VedaROS QLM 训练
+
+let brain = mind_read("eeg");          // 脑电 -> 量子态
+let model = qlm_invoke(brain, 10, 0.01); // QLM 调用
+model.export("brain_model.rvdlm");        // 导出模型
+veda_qlm_train(brain, 200, 0.01);       // VedaROS QLM 训练
