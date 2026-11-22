@@ -1,0 +1,13 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    auto zplus = basis_state(0.0, 0.0, 0);
+    auto zminus = basis_state(0.0, 0.0, 1);
+
+    auto xplus = basis_state(1.5707963, 0.0, 0);
+
+    auto yplus = basis_state(1.5707963, 1.5707963, 0);
+
+    auto arbitrary = basis_state(0.8, 2.1, 0);
+
+    return zminus.measure();
+}

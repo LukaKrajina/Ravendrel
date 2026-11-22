@@ -1,0 +1,4 @@
+let brain_state = mind_read("eeg");
+let bits = brain_state.measure;
+mind_train(brain_state, 200, 0.01);
+mind_feedback(brain_state);

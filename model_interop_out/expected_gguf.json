@@ -1,0 +1,8 @@
+{
+  "name": "weight",
+  "dtype": "F32",
+  "shape": [2, 3],
+  "bytes": 24,
+  "fnv1a64": "bed36a15b133dc86",
+  "metadata": {"name": "toy", "architecture": "rvdlm", "note": "gguf 往返"}
+}

@@ -1,0 +1,82 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/client/out/**/*.js",
+        "${workspaceFolder}/server/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Debug rvdlRSP_gui (Qt)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/runtime/build-linux/rvdlRSP/rvdlRSP_gui",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "LD_LIBRARY_PATH",
+          "value": "${workspaceFolder}/runtime/build-linux:${env:LD_LIBRARY_PATH}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "cmake: build"
+    },
+    {
+      "name": "Debug runtime (daemon)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/runtime/build-linux/runtime",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "LD_LIBRARY_PATH",
+          "value": "${workspaceFolder}/runtime/build-linux:${env:LD_LIBRARY_PATH}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "cmake: build"
+    },
+    {
+      "name": "Debug rvdlRSP (Vulkan)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/runtime/build-linux/rvdlRSP/rvdlRSP",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "LD_LIBRARY_PATH",
+          "value": "${workspaceFolder}/runtime/build-linux:${env:LD_LIBRARY_PATH}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "cmake: build"
+    }
+  ]
+}

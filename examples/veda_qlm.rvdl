@@ -1,0 +1,4 @@
+let brain = mind_read("eeg");
+let model = qlm_invoke(brain, 10, 0.01);
+model.export("brain_model.rvdlm");
+veda_qlm_train(brain, 200, 0.01);

@@ -1,0 +1,29 @@
+@[gate] @[undo] @[steer] @[unitary]
+void U(Qubit q) {
+    h(q);
+    rz(q, 0.5);
+}
+
+@[gate] @[noise("depolarizing")] @[undo]
+void NoisyX(Qubit q) {
+    x(q);
+}
+
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    Qubit q = alloc();
+    Qubit c = alloc();
+
+    U(q);
+
+    U_undo(q);
+
+    U_steer(c, q);
+
+    NoisyX(q);
+    NoisyX_undo(q);
+
+    int32 r = measure(q);
+    measure(c);
+    return r;
+}

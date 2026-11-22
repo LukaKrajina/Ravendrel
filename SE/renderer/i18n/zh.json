@@ -1,0 +1,17 @@
+{
+    "toolbar.open": "打开",
+    "toolbar.save": "保存",
+    "toolbar.run": "▶ 运行",
+    "toolbar.clear": "清空输出",
+    "toolbar.hint": "运行前请先启动 runtime --daemon",
+    "status.untitled": "未命名",
+    "status.modified": "已修改",
+    "status.opened": "已打开",
+    "status.saved": "已保存",
+    "status.compiling": "编译中...",
+    "status.success": "编译成功",
+    "status.fail": "编译失败",
+    "shell.opened": "已打开",
+    "shell.saved": "已保存",
+    "shell.compiling": "编译中..."
+}

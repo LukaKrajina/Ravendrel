@@ -1,0 +1,17 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    rvdl_sys_log(2, "QCOS: hello from RVDL");
+    rvdl_sys_logi(2, 42);
+
+    rvdl_sys_call(2, 0, 0, 0);
+    int32 tick = rvdl_sys_call(10, 0, 0, 0);
+    rvdl_sys_logi(2, tick);
+
+    double gap  = rvdl_qms_gap(0, 0.01, 0.0);
+    double tmix = rvdl_mix_bound(gap, 1024.0, 0.01);
+    double tvar = rvdl_qms_conc(gap, 0.01);
+
+    rvdl_sys_log(2, "QCOS: QMS bounds computed");
+
+    return 0;
+}

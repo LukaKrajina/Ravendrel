@@ -1,0 +1,41 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    outb(1019, 0);
+    outb(1017, 0);
+    outb(1019, 128);
+    outb(1016, 3);
+    outb(1017, 0);
+    outb(1019, 3);
+    outb(1018, 199);
+    outb(1020, 11);
+
+    cap<int32> bitmap = rvdl_gc_alloc(16);
+    *(bitmap + 0) = 0;
+    *(bitmap + 1) = 0;
+    *(bitmap + 2) = 0;
+    *(bitmap + 3) = 0;
+    *(bitmap + 0) = *(bitmap + 0) | (1 << 5);
+    int32 allocated = (*(bitmap + 0) >> 5) & 1;
+
+    cap<int32> idt = rvdl_gc_alloc(16);
+    int32 handler = addr(&rvdl_main);
+    *(idt + 0) = (handler & 65535) | (8 << 16);
+    *(idt + 1) = 36352 | (((handler >> 16) & 65535) << 16);
+    *(idt + 2) = 0;
+    *(idt + 3) = 0;
+
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 81);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 67);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 79);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 83);
+
+    unsafe {
+        native("hlt");
+    }
+
+    return allocated;
+}

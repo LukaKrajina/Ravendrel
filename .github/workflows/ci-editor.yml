@@ -1,0 +1,60 @@
+name: CI - Editor & Web UI
+
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  se-build-test:
+    name: SE (Electron editor)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: SE
+        run: npm install --ignore-scripts
+
+      - name: Lint
+        working-directory: SE
+        run: npm run lint
+
+      - name: Build
+        working-directory: SE
+        run: npm run build
+
+      - name: Test
+        working-directory: SE
+        run: node --test "test/**/*.test.js"
+
+  chatWebUI-build-test:
+    name: Ravendrel Web UI (Vite)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: chatWebUI
+        run: npm install
+
+      - name: Lint
+        working-directory: chatWebUI
+        run: npm run lint
+
+      - name: Build
+        working-directory: chatWebUI
+        run: npm run build
+
+      - name: Test
+        working-directory: chatWebUI
+        run: npm test

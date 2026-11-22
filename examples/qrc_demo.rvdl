@@ -1,0 +1,19 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    auto res = new QReservoir(8, 4);
+
+    let brain = mind_read("eeg");
+
+    let features = qrc_probe(res, brain);
+
+    qrc_train(res, 200, 0.01);
+
+    let pred = qrc_predict(res, brain);
+
+    let model = qlm_invoke(features, 10, 0.01);
+    model.export("qrc_qlm_model.rvdlm");
+
+    qrc_release(res);
+
+    return 0;
+}

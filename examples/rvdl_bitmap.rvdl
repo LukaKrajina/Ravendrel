@@ -1,0 +1,20 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    cap<int32> bitmap = rvdl_gc_alloc(16);
+
+    *(bitmap + 0) = 0;
+    *(bitmap + 1) = 0;
+    *(bitmap + 2) = 0;
+    *(bitmap + 3) = 0;
+
+    *(bitmap + 0) = *(bitmap + 0) | (1 << 5);
+
+    int32 set5 = (*(bitmap + 0) >> 5) & 1;
+    int32 set6 = (*(bitmap + 0) >> 6) & 1;
+
+    *(bitmap + 0) = *(bitmap + 0) & (~(1 << 5));
+
+    int32 cleared = (*(bitmap + 0) >> 5) & 1;
+
+    return 100 * set5 + 10 * set6 + cleared;
+}

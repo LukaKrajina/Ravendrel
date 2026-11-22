@@ -1,0 +1,21 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    int32 iterations = 50000;
+    int32 count = 0;
+    int32 total_ones = 0;
+    int32 temp_meas = 0;
+
+    auto massive_reg = new QuantumRegister(15);
+
+    while (count < iterations) {
+        auto bell_pair = new BellState();
+        
+        temp_meas = bell_pair.measure();
+        
+        total_ones = total_ones + temp_meas;
+        
+        count = count + 1;
+    }
+
+    return total_ones;
+}

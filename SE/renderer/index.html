@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>SE</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header class="toolbar">
+            <span class="title">SE</span>
+            <button id="btn-open" data-i18n="toolbar.open">打开</button>
+            <button id="btn-save" data-i18n="toolbar.save">保存</button>
+            <button id="btn-run" data-i18n="toolbar.run">▶ 运行</button>
+            <button id="btn-clear" data-i18n="toolbar.clear">清空输出</button>
+            <span class="hint" data-i18n="toolbar.hint">运行前请先启动 runtime --daemon</span>
+            <select id="lang-select" class="lang-select">
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="ru">Русский</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+            </select>
+        </header>
+        <div id="statusbar">
+            <span id="status-file" data-i18n="status.untitled">未命名</span>
+            <span id="status-diag"></span>
+        </div>
+        <main>
+            <section class="editor-pane">
+                <div id="editor"></div>
+            </section>
+            <section class="shell-pane">
+                <pre id="shell"></pre>
+            </section>
+        </main>
+        <script src="../dist/renderer/bundle.js"></script>
+    </body>
+</html>

@@ -1,0 +1,195 @@
+# =============================================================================
+# Ravendrel .gitignore
+# 组织 OpenMasons  |  项目 Ravendrel 量子编程语言
+#
+# 原则：只忽略「可重新生成 / 本机私有 / 包管理器安装」的内容。
+#       vendor/ 下有意随仓库分发的第三方预编译库在文末显式白名单保留。
+# 注意：已被 git 跟踪的文件不受本文件约束，需 git rm --cached 才会停止跟踪。
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. 依赖与包管理器（npm install / CMake 可恢复）
+# -----------------------------------------------------------------------------
+node_modules/
+.pnpm-store/
+.npm/
+.deps/
+.pnp
+.pnp.js
+
+# -----------------------------------------------------------------------------
+# 2. C/C++ · CMake · Ninja 构建产物
+# -----------------------------------------------------------------------------
+build/
+build-*/
+cmake-build-*/
+runtime/build*/
+rvdlRSP/build*/
+RSP/build*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+cmake_uninstall.cmake
+CTestTestfile.cmake
+compile_commands.json
+install_manifest.txt
+Makefile
+build.ninja
+.ninja_deps
+.ninja_log
+*.ninja
+*.cmake
+*.make
+*.o
+*.obj
+*.d
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.lib
+*.exe
+*.tlog
+*.ilk
+*.pdb
+*.exp
+*.idb
+
+# -----------------------------------------------------------------------------
+# 3. Node.js / TypeScript / 前端构建
+# -----------------------------------------------------------------------------
+server/out/
+client/out/
+SE/out/
+SE/dist/
+chatWebUI/dist/
+dist/
+*.tsbuildinfo
+*.map
+.vite/
+coverage/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -----------------------------------------------------------------------------
+# 4. Go / Python 等其他语言产物
+# -----------------------------------------------------------------------------
+installer/ravendrelup
+installer/ravendrelup.exe
+*.test
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# -----------------------------------------------------------------------------
+# 5. 包 / 发布产物
+# -----------------------------------------------------------------------------
+bin/
+release/
+*.vsix
+*.apk
+*.aab
+*.ipa
+*.7z
+*.tar.gz
+
+# -----------------------------------------------------------------------------
+# 6. 本机私有：签名私钥 / WDAC 部署产物（严禁提交）
+# -----------------------------------------------------------------------------
+scripts/certs/*.pfx
+scripts/certs/*.key
+scripts/build/wdac/deploy-log.txt
+scripts/build/wdac/policies.json
+scripts/build/wdac/refresh.log
+scripts/build/wdac/fix-out.txt
+scripts/build/wdac/_rebuilt-hashes.xml
+scripts/build/wdac/supplemental-rebuilt.cip
+scripts/build/wdac/supplemental-rebuilt.xml
+scripts/build/wdac/*.pfx
+runtime/android/apk/release.keystore
+runtime/android/apk/keystore.properties
+runtime/android/apk/local.properties
+runtime/android/apk/app/build/
+
+# -----------------------------------------------------------------------------
+# 7. 缓存 / 临时文件 / 日志
+# -----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.cache/
+.idea/
+*.code-workspace
+.rvdl-cache/
+.tmp-*/
+*_tmp*
+_tmp_*
+COMMIT_MSG.txt
+sign_clang.ps1
+runtime/build_log.txt
+runtime/*.tmp*
+*.log
+build_log.txt
+
+# -----------------------------------------------------------------------------
+# 8. 白名单：vendor/ 下有意随仓库分发的第三方预编译库
+# -----------------------------------------------------------------------------
+!vendor/
+!vendor/**/
+!vendor/**/*.dll
+!vendor/**/*.lib
+!vendor/**/*.a
+!vendor/**/*.so
+!vendor/**/*.dylib
+
+# -----------------------------------------------------------------------------
+# 9. 俄语翻译文档：仅在 gitflic 分支（ru）跟踪，GitHub 推送不包含
+# -----------------------------------------------------------------------------
+*.ru.md
+
+# -----------------------------------------------------------------------------
+# 10. IDE / 编辑器本机状态
+# -----------------------------------------------------------------------------
+.vs/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+.vscode-test/
+.clangd/
+
+# -----------------------------------------------------------------------------
+# 11. Python / 前端工具缓存
+# -----------------------------------------------------------------------------
+.mypy_cache/
+.ruff_cache/
+.tox/
+*.egg-info/
+.nyc_output/
+.turbo/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+
+# -----------------------------------------------------------------------------
+# 12. 通用垃圾文件
+# -----------------------------------------------------------------------------
+*.bak
+*.orig
+*.rej
+*.pid
+*.stackdump
+*.dmp
+hh.exe

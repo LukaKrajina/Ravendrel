@@ -1,0 +1,35 @@
+# rvdlRSP / runtime C++ 代码风格配置(P0)
+# 与现有代码风格对齐:4 空格缩进、Allman 大括号、命名空间内缩进、
+# 指针靠左、include 顺序保持原样(避免破坏依赖)。
+BasedOnStyle: LLVM
+Language: Cpp
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+
+# 大括号风格:换行(Allman),与现有 class/namespace 风格一致
+BreakBeforeBraces: Allman
+
+# 命名空间内容缩进(与现有代码一致)
+NamespaceIndentation: All
+
+# 指针/引用靠左:int *p, const Foo &f
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+# 不允许短函数/if/循环压缩到单行,保持可读与可 diff
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+
+# 保持 include 原顺序(项目内 include 有依赖顺序,禁止自动排序)
+SortIncludes: Never
+IncludeBlocks: Preserve
+
+# 空行与空格
+MaxEmptyLinesToKeep: 1
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceBeforeParens: ControlStatements

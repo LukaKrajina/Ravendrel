@@ -1,0 +1,27 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    int32 x = 1;
+    int32 r = 0;
+
+    if (x == 1) {
+        r = 10;
+    } else {
+        r = 20;
+    }
+
+    if (x == 0) {
+        r = r + 1;
+    } else if (x == 1) {
+        r = r + 2;
+    } else {
+        r = r + 3;
+    }
+
+    if (x == 1) {
+        if (r == 12) {
+            r = 99;
+        }
+    }
+
+    return r;
+}

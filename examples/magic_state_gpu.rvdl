@@ -1,0 +1,25 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    auto a = alloc();
+    auto b = alloc();
+    auto c = alloc();
+    auto d = alloc();
+    auto e = alloc();
+    auto f = alloc();
+    auto g = alloc();
+    auto q7 = alloc();
+
+    h(a);
+    h(b);
+    toffoli(a, b, c);
+    h(c);
+    toffoli(c, d, e);
+    h(e);
+    toffoli(e, f, g);
+    h(g);
+    h(q7);
+    toffoli(g, q7, a);
+
+    int32 result = measure(a);
+    return result;
+}

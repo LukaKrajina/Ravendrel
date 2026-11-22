@@ -1,0 +1,23 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    cap<int32> idt = rvdl_gc_alloc(16);
+
+    int32 offset = 4096;
+    int32 selector = 8;
+
+    *(idt + 0) = (offset & 65535) | (selector << 16);
+    *(idt + 1) = 36352 | ((offset >> 16) & 65535);
+    *(idt + 2) = 0;
+    *(idt + 3) = 0;
+
+    int32 low = *(idt + 0) & 65535;
+    int32 sel = (*(idt + 0) >> 16) & 65535;
+    int32 attr = (*(idt + 1) >> 8) & 255;
+
+    int32 check = 0;
+    if (low == 4096) { check = check + 1; }
+    if (sel == 8)    { check = check + 1; }
+    if (attr == 142) { check = check + 1; }
+
+    return check;
+}

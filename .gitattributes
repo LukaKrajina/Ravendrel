@@ -1,0 +1,35 @@
+# Line ending normalization: shell scripts LF, batch files CRLF
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Images
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+
+# Binary / libraries / executables
+*.dll binary
+*.lib binary
+*.so binary
+*.so.* binary
+*.dylib binary
+*.a binary
+*.exe binary
+
+# Shaders / packages / archives
+*.spv binary
+*.rvdlm binary
+*.vsix binary
+*.zip binary
+*.gz binary
+*.tar binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary

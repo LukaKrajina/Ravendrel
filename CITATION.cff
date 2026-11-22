@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use Ravendrel in your research, please cite it."
+title: "Ravendrel: A Quantum Programming Language for Quantum Computing, Neural Interfaces and Quantum Robotics"
+type: software
+authors:
+  - name: "OpenMasons"
+version: 0.3.3
+date-released: "2026-11-21"
+license: Apache-2.0
+repository-code: "https://github.com/LukaKrajina/Ravendrel"
+url: "https://github.com/LukaKrajina/Ravendrel"
+abstract: >-
+  Ravendrel is an experimental programming language (.rvdl) for quantum
+  computing, neural interfaces, quantum language models and quantum robotics.
+  The repository provides a VS Code language extension, an LLVM ORC JIT C++
+  runtime, a command-line toolchain, a web inference UI, a Go installer, a
+  real-time quantum visualizer, and the VedaROS / QbNS subsystems.
+keywords:
+  - quantum computing
+  - quantum programming language
+  - quantum machine learning
+  - brain-computer interface
+  - quantum robotics
+  - LLVM
+  - JIT compilation

@@ -1,0 +1,22 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    string alice = qchain_wallet();
+    string bob = qchain_wallet();
+
+    qchain_mint(alice, 1000000);
+    int32 ok = qchain_transfer(alice, bob, 500);
+
+    uint64 bal = qchain_balance(alice);
+
+    int32 height = qchain_mine();
+    int32 valid = qchain_verify();
+
+    string key = qchain_qkd(64);
+
+    QObject coin = qchain_coin_mint(8);
+    int32 coin_ok = qchain_coin_verify(coin);
+
+    int32 agreed = qchain_qdba(5);
+
+    return ok;
+}

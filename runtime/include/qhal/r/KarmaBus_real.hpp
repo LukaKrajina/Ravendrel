@@ -1,0 +1,155 @@
+#pragma once
+#include <vector>
+#include <cstdint>
+#include <complex>
+#include <iostream>
+#include <random>
+#include "../IQuantumBackend.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+#ifndef M_PI_2
+#define M_PI_2 1.5707963267948966
+#endif
+
+namespace qhal {
+
+    struct CompositeSpinState {
+        std::complex<double> amplitudes[3];
+    };
+
+    class RealTeleportationProtocol {
+    public:
+        void teleport_tripartite_state(CompositeSpinState& target) {
+            std::complex<double> phase_rotation = std::polar(1.0, 2.0 * M_PI / 3.0);
+            CompositeSpinState resource = {
+                (target.amplitudes[0] + target.amplitudes[1] + target.amplitudes[2]) / std::sqrt(3.0),
+                (target.amplitudes[0] + phase_rotation * target.amplitudes[1] + std::pow(phase_rotation, 2) * target.amplitudes[2]) / std::sqrt(3.0),
+                (target.amplitudes[0] + std::pow(phase_rotation, 2) * target.amplitudes[1] + phase_rotation * target.amplitudes[2]) / std::sqrt(3.0)
+            };
+            target = resource;
+            std::cout << "[KarmaBus_real] Executed composite spin state teleportation.\n";
+        }
+    };
+
+    class PostQuantumSecureChannel {
+    private:
+        double extractable_limit_ms = 2.5; 
+    public:
+        bool transmit_and_reconcile(double network_latency_ms) {
+            if (network_latency_ms > extractable_limit_ms) {
+                std::cout << "[KarmaBus_real] Latency exceeds PQC limit. State post-selected and discarded.\n";
+                return false; 
+            }
+            std::cout << "[KarmaBus_real] QRQT Channel secured. Basis reconciled.\n";
+            return true;
+        }
+    };
+
+    class RealPuncturedQECC {
+    private:
+        const double critical_threshold_ms = 1.8;
+        const double memory_coherence_limit_ms = 5.0;
+    public:
+        std::vector<size_t> execute_dynamic_puncturing(double real_time_latency_ms, 
+                                                       int& code_distance, 
+                                                       std::vector<size_t>& physical_qubit_ids) {
+            std::vector<size_t> punctured_qubits;
+
+            if (real_time_latency_ms > critical_threshold_ms && code_distance > 1) {
+                int distance_reduction = static_cast<int>((real_time_latency_ms - critical_threshold_ms) / 0.5);
+                if (distance_reduction < 1) distance_reduction = 1;
+                if (code_distance - distance_reduction < 1) {
+                    distance_reduction = code_distance - 1;
+                }
+
+                if (distance_reduction > 0) {
+                    size_t target_discard_count = static_cast<size_t>(distance_reduction * 2); 
+                    
+                    if (physical_qubit_ids.empty()) {
+                        target_discard_count = 0;
+                    } else if (target_discard_count > physical_qubit_ids.size() - 1) {
+                        target_discard_count = physical_qubit_ids.size() - 1;
+                    }
+
+                    for (size_t i = 0; i < target_discard_count; ++i) {
+                        punctured_qubits.push_back(physical_qubit_ids.back());
+                        physical_qubit_ids.pop_back();
+                    }
+
+                    code_distance -= distance_reduction;
+                    
+                    std::cout << "[KarmaBus_real] Network latency critical (" << real_time_latency_ms 
+                              << "ms). Dynamic puncturing executed.\n"
+                              << "                  -> Discarded " << punctured_qubits.size() << " peripheral qubits.\n"
+                              << "                  -> Code distance reduced to " << code_distance << " to suppress dephasing.\n";
+                }
+            } else {
+                std::cout << "[KarmaBus_real] Network latency optimal (" << real_time_latency_ms 
+                          << "ms). State coherence secure. Distance maintained at " << code_distance << ".\n";
+            }
+
+            return punctured_qubits;
+        }
+    };
+
+    class GameTheoreticAllocator {
+    private:
+        std::mt19937 rng;
+    public:
+        GameTheoreticAllocator() {
+            std::random_device rd;
+            rng = std::mt19937(rd());
+        }
+
+        void resolve_network_congestion(std::vector<double>& client_utilities) {
+            double price_of_anarchy = 0.0;
+            for (double utility : client_utilities) price_of_anarchy += utility;
+
+            if (price_of_anarchy > 10.0) {
+                std::normal_distribution<double> perturbation(0.0, 0.15);
+                for (double& utility : client_utilities) {
+                    utility += perturbation(rng); 
+                }
+                std::cout << "[KarmaBus_real] Bayesian Mean Field Approximation applied to break gradient conflict.\n";
+            }
+        }
+    };
+
+    class KarmaBus_real {
+    private:
+        RealTeleportationProtocol teleport;
+        PostQuantumSecureChannel secure_channel;
+        RealPuncturedQECC qecc;
+        GameTheoreticAllocator allocator;
+
+    public:
+        void establish_physical_link(size_t node_a, size_t node_b, double measured_latency_ms,
+                                     std::vector<size_t> &physical_qubits,
+                                     qhal::IQuantumBackend* local_qpu) {
+            const double penalty = std::min(0.5, measured_latency_ms / 100.0);
+            std::vector<double> client_utilities = {
+                2.0 + 0.5 * static_cast<double>(node_a % 5) - penalty,
+                2.0 + 0.5 * static_cast<double>(node_b % 5) - penalty,
+                2.0 + 0.25 * static_cast<double>((node_a + node_b) % 5) - penalty,
+            };
+            allocator.resolve_network_congestion(client_utilities);
+            int code_distance = 3;
+
+            std::vector<size_t> released_qubits = qecc.execute_dynamic_puncturing(
+                measured_latency_ms, code_distance, physical_qubits
+            );
+
+            for (size_t q_id : released_qubits) {
+                local_qpu->release_qubit(q_id);
+            }
+
+            if (secure_channel.transmit_and_reconcile(measured_latency_ms)) {
+                CompositeSpinState state;
+                teleport.teleport_tripartite_state(state);
+            }
+        }
+    };
+}

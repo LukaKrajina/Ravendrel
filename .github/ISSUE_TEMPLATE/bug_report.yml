@@ -1,0 +1,81 @@
+name: Bug 报告
+description: 报告一个可复现的问题
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请勿在公开 Issue 中粘贴私钥、令牌或本机绝对路径等敏感信息。
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 受影响组件
+      description: 选择最接近的组件
+      options:
+        - server / 语言服务器 / CLI
+        - client / VSCode 扩展
+        - runtime / C++ 运行时
+        - RSP / 仿真平台
+        - SE / 编辑器
+        - chatWebUI / Web 界面
+        - installer / 安装器
+        - 构建 / 文档 / 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 问题描述
+      description: 清晰简洁地描述发生了什么
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现步骤
+      description: 最小复现步骤或示例 .rvdl 代码
+      placeholder: |
+        1. ...
+        2. ...
+        3. 观察到 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: 例如 0.3.3，可用 git describe 获取
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 操作系统
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Android
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 错误信息
+      render: shell
+      description: 如有崩溃或诊断输出，请粘贴在此

@@ -1,0 +1,15 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    int32 epochs = 10;
+    double learning_rate = 0.1;
+
+    auto encoded_prompt = encode_text("A");
+
+    auto trained_model = qlm_invoke(encoded_prompt, epochs, learning_rate);
+
+    trained_model.export("chaos_fluid_predictor.rvdlm");
+
+    int32 final_value = encoded_prompt.measure();
+
+    return final_value;
+}

@@ -1,0 +1,11 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    int32 a = 15;
+    int32 b = a | 240;
+    int32 c = b & 15;
+    int32 d = 1 << 4;
+    int32 e = d >> 1;
+    int32 f = a ^ 15;
+    int32 g = ~0;
+    return b + c + d + e + f + g;
+}

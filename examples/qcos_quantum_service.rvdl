@@ -1,0 +1,45 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    outb(1019, 0);
+    outb(1017, 0);
+    outb(1019, 128);
+    outb(1016, 3);
+    outb(1017, 0);
+    outb(1019, 3);
+    outb(1018, 199);
+    outb(1020, 11);
+
+    double gap = rvdl_qms_gap(0, 0.01, 0.0);
+    double tmix = rvdl_mix_bound(gap, 1024.0, 0.01);
+    double tvar = rvdl_qms_conc(gap, 0.01);
+
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 81);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 67);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 79);
+    while ((inb(1021) & 32) == 0) { }
+    outb(1016, 83);
+
+    if (gap > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 71);
+    }
+
+    if (tmix > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 77);
+    }
+
+    if (tvar > 0.0) {
+        while ((inb(1021) & 32) == 0) { }
+        outb(1016, 67);
+    }
+
+    unsafe {
+        native("hlt");
+    }
+
+    return 0;
+}

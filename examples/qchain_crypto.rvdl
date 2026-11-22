@@ -1,0 +1,19 @@
+@layer(time=0, thread=0, coord=(0))
+int32 rvdl_main() {
+    string h1 = qchain_sha3("hello quantum chain");
+    string h2 = qchain_hmac("deadbeef", "authenticate me");
+    string h3 = qchain_hash_unicode("我爱你");
+
+    string sig = qchain_sign("quantum transaction payload");
+    int32 sig_ok = qchain_sign_verify("quantum transaction payload", sig);
+    string pk = qchain_sign_pubkey();
+
+    string encapsulated = qchain_mlkem_encaps(pk);
+
+    int32 causal_ok = qchain_causal_verify();
+
+    string ct = qchain_cipher_encrypt(12345, "top secret message");
+    string pt = qchain_cipher_decrypt(12345, ct);
+
+    return sig_ok;
+}

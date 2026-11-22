@@ -1,0 +1,17 @@
+{
+    "toolbar.open": "Ouvrir",
+    "toolbar.save": "Enregistrer",
+    "toolbar.run": "▶ Exécuter",
+    "toolbar.clear": "Effacer la sortie",
+    "toolbar.hint": "Démarrez runtime --daemon avant d'exécuter",
+    "status.untitled": "Sans titre",
+    "status.modified": "Modifié",
+    "status.opened": "Ouvert",
+    "status.saved": "Enregistré",
+    "status.compiling": "Compilation...",
+    "status.success": "Compilation réussie",
+    "status.fail": "Échec de la compilation",
+    "shell.opened": "Ouvert",
+    "shell.saved": "Enregistré",
+    "shell.compiling": "Compilation..."
+}

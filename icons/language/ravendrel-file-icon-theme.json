@@ -1,0 +1,21 @@
+{
+  "iconDefinitions": {
+    "ravendrel-file": {
+      "iconPath": "./ravendrel-dark.svg"
+    },
+    "qk-file": {
+      "iconPath": "./ravendrel-raven.svg",
+      "dark": {
+        "iconPath": "./ravendrel-raven-dark.svg"
+      }
+    }
+  },
+  "file": "ravendrel-file",
+  "fileExtensions": {
+    "rvdl": "ravendrel-file",
+    "qk": "qk-file"
+  },
+  "languageIds": {
+    "ravendrel": "ravendrel-file"
+  }
+}

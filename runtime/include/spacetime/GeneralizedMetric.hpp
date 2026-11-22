@@ -1,0 +1,147 @@
+#pragma once
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+namespace rvdl::spacetime
+{
+
+    struct GeneralizedMetric
+    {
+        int D = 1;
+        std::vector<double> g;
+        std::vector<double> B;
+        std::vector<double> H;
+        std::vector<double> eta;
+
+        GeneralizedMetric(int dim) : D(dim)
+        {
+            g.assign(static_cast<size_t>(D) * D, 0.0);
+            B.assign(static_cast<size_t>(D) * D, 0.0);
+            eta.assign(static_cast<size_t>(2 * D) * 2 * D, 0.0);
+            for (int i = 0; i < D; ++i)
+            {
+                eta[static_cast<size_t>(i) * 2 * D + (D + i)] = 1.0;
+                eta[static_cast<size_t>(D + i) * 2 * D + i] = 1.0;
+            }
+        }
+
+        void set_diagonal(const std::vector<double> &diag)
+        {
+            for (int i = 0; i < D; ++i)
+                g[static_cast<size_t>(i) * D + i] = diag[i];
+        }
+
+        void build()
+        {
+            std::vector<double> ginv(static_cast<size_t>(D) * D, 0.0);
+            invert(g, ginv);
+
+            H.assign(static_cast<size_t>(2 * D) * 2 * D, 0.0);
+
+            for (int i = 0; i < D; ++i)
+                for (int j = 0; j < D; ++j)
+                {
+                    double bg = 0.0;
+                    double gb = 0.0;
+                    double bgb = 0.0;
+                    for (int k = 0; k < D; ++k)
+                    {
+                        bg += B[static_cast<size_t>(i) * D + k] * ginv[static_cast<size_t>(k) * D + j];
+                        gb += ginv[static_cast<size_t>(i) * D + k] * B[static_cast<size_t>(k) * D + j];
+                        for (int l = 0; l < D; ++l)
+                            bgb += B[static_cast<size_t>(i) * D + k] * ginv[static_cast<size_t>(k) * D + l] *
+                                   B[static_cast<size_t>(l) * D + j];
+                    }
+
+                    H[static_cast<size_t>(i) * 2 * D + j] = g[static_cast<size_t>(i) * D + j] - bgb;
+                    H[static_cast<size_t>(i) * 2 * D + (D + j)] = bg;
+                    H[static_cast<size_t>(D + i) * 2 * D + j] = -gb;
+                    H[static_cast<size_t>(D + i) * 2 * D + (D + j)] = ginv[static_cast<size_t>(i) * D + j];
+                }
+        }
+
+        double o_dd_residual() const
+        {
+            std::vector<double> Heta(static_cast<size_t>(2 * D) * 2 * D, 0.0);
+            std::vector<double> HetaH(static_cast<size_t>(2 * D) * 2 * D, 0.0);
+            matmul(H, eta, Heta);
+            matmul(Heta, H, HetaH);
+            double s = 0.0;
+            for (size_t p = 0; p < eta.size(); ++p)
+            {
+                double d = HetaH[p] - eta[p];
+                s += d * d;
+            }
+            return std::sqrt(s);
+        }
+
+        double section_condition_residual(const std::vector<double> &dM,
+                                          const std::vector<double> &dN) const
+        {
+            double s = 0.0;
+            for (int M = 0; M < 2 * D; ++M)
+                for (int N = 0; N < 2 * D; ++N)
+                    s += eta[static_cast<size_t>(M) * 2 * D + N] * dM[M] * dN[N];
+            return std::abs(s);
+        }
+
+        double dual_radius(double R) const { return 1.0 / R; }
+
+    private:
+        static void invert(const std::vector<double> &m, std::vector<double> &out)
+        {
+            int n = static_cast<int>(std::sqrt(static_cast<double>(m.size())));
+            std::vector<double> a = m;
+            out.assign(static_cast<size_t>(n) * n, 0.0);
+            for (int i = 0; i < n; ++i)
+                out[static_cast<size_t>(i) * n + i] = 1.0;
+
+            for (int col = 0; col < n; ++col)
+            {
+                int piv = col;
+                for (int r = col + 1; r < n; ++r)
+                    if (std::abs(a[static_cast<size_t>(r) * n + col]) >
+                        std::abs(a[static_cast<size_t>(piv) * n + col]))
+                        piv = r;
+                for (int c = 0; c < n; ++c)
+                {
+                    std::swap(a[static_cast<size_t>(col) * n + c], a[static_cast<size_t>(piv) * n + c]);
+                    std::swap(out[static_cast<size_t>(col) * n + c], out[static_cast<size_t>(piv) * n + c]);
+                }
+                double pv = a[static_cast<size_t>(col) * n + col];
+                for (int c = 0; c < n; ++c)
+                {
+                    a[static_cast<size_t>(col) * n + c] /= pv;
+                    out[static_cast<size_t>(col) * n + c] /= pv;
+                }
+                for (int r = 0; r < n; ++r)
+                {
+                    if (r == col)
+                        continue;
+                    double factor = a[static_cast<size_t>(r) * n + col];
+                    for (int c = 0; c < n; ++c)
+                    {
+                        a[static_cast<size_t>(r) * n + c] -= factor * a[static_cast<size_t>(col) * n + c];
+                        out[static_cast<size_t>(r) * n + c] -= factor * out[static_cast<size_t>(col) * n + c];
+                    }
+                }
+            }
+        }
+
+        static void matmul(const std::vector<double> &A, const std::vector<double> &B,
+                           std::vector<double> &C)
+        {
+            int n = static_cast<int>(std::sqrt(static_cast<double>(A.size())));
+            C.assign(static_cast<size_t>(n) * n, 0.0);
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < n; ++j)
+                {
+                    double s = 0.0;
+                    for (int k = 0; k < n; ++k)
+                        s += A[static_cast<size_t>(i) * n + k] * B[static_cast<size_t>(k) * n + j];
+                    C[static_cast<size_t>(i) * n + j] = s;
+                }
+        }
+    };
+}

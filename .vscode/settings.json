@@ -1,0 +1,7 @@
+{
+    "editor.fontFamily": "'SF Mono', Menlo, Monaco, 'Courier New', 'DejaVu Sans Mono', monospace",
+    "cmake.sourceDirectory": "${workspaceFolder}/runtime",
+    "cmake.buildDirectory": "${workspaceFolder}/runtime/build-linux",
+    "cmake.generator": "Ninja",
+    "cmake.ignoreCMakeListsMissing": true
+}
